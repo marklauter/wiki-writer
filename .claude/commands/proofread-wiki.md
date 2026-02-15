@@ -81,14 +81,40 @@ Err on the side of filing — only skip when the match is clearly the same probl
 
 ## Phase 4: Issue filing
 
-Follow `.claude/skills/file-issue/SKILL.md` with `docs.yml` template. Overrides:
+File each finding that survived Phase 3 deduplication. Group closely related findings sharing the same root cause into one issue.
 
-1. Group closely related findings sharing the same root cause into one issue.
-2. Launch Task agents (`subagent_type: general-purpose`, `model: haiku`) in parallel.
-3. Skip confirmation — user authorized filing by invoking the command.
-4. Title: under 70 characters, no prefix (the `documentation` label provides categorization).
-5. Label: `documentation` (use `--label documentation` on `gh issue create`).
-6. Only file findings that survived Phase 3 deduplication.
+Read `ISSUE_TEMPLATE/wiki-docs.yml` for body field definitions. Build the body with `### Label` sections matching the template's field `id`s. Use `_No response_` for empty optional fields. For dropdowns, use exact values from the template's `options` list.
+
+Title: under 70 characters, no category prefix (labels handle that), focus on *what's wrong*.
+
+For each issue, run via Bash (`run_in_background: true`):
+
+```bash
+bash .scripts/file-issue.sh "TITLE" <<'EOF'
+### Page
+Query-and-Scan.md
+
+### Pass
+Structural — organization, flow, gaps, redundancies
+
+### Severity
+must-fix — readers will be confused or misled
+
+### Finding
+...
+
+### Recommendation
+...
+
+### Source file
+_No response_
+
+### Notes
+_No response_
+EOF
+```
+
+Launch all calls in parallel. Collect results with `TaskOutput`.
 
 ## Phase 5: Summary
 

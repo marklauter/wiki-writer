@@ -1,6 +1,6 @@
 name: Documentation
 description: Report a documentation issue — inaccuracy, clarity problem, or style violation
-labels: ["docs"]
+labels: ["documentation"]
 body:
   - type: input
     id: page

@@ -18,14 +18,14 @@ Read `workspace.config.yml` to get `repo`, `sourceDir`, `wikiDir`, `audience`, a
 - `$ARGUMENTS`: optional filters.
   - One or more issue numbers (e.g., `42 57`) — fix only those issues.
   - A wiki page name (e.g., `Query-and-Scan.md`) — fix only issues for that page.
-  - `--dry-run` — parse and group issues, show the plan, but don't edit files or close issues.
+  - `-plan` — parse and group issues, show the plan, but don't edit files or close issues.
   - (no arguments) — fix all open docs issues.
 
 ## Phase 1: Fetch and parse issues
 
 1. Fetch open docs issues:
    ```bash
-   gh issue list --repo {repo} --label docs --state open --json number,title,body,labels --limit 100
+   gh issue list --repo {repo} --label documentation --state open --json number,title,body,labels --limit 100
    ```
 2. If `$ARGUMENTS` specifies issue numbers, filter to those. If it specifies a page name, filter to issues whose `Page` field matches.
 3. Parse each issue body to extract the structured fields from the `docs.yml` template:
@@ -41,7 +41,7 @@ Read `workspace.config.yml` to get `repo`, `sourceDir`, `wikiDir`, `audience`, a
 
 Build a list of `(wiki-page, [issues-with-parsed-fields], [source-files])` tuples.
 
-If `--dry-run` was specified, display the grouped plan and stop here.
+If `-plan` was specified, display the grouped plan and stop here.
 
 ## Phase 2: Fixer swarm (parallel agents)
 

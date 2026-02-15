@@ -2,7 +2,7 @@
 name: proofread-wiki
 description: Senior technical editor — reviews wiki pages for structure, clarity, accuracy, and style. Creates GitHub issues for each finding.
 model: sonnet
-allowed-tools: Bash, Read, Grep, Glob, Task, TodoWrite
+allowed-tools: Bash, Read, Grep, Glob, Task, TodoWrite, TaskOutput
 ---
 
 Orchestrate a documentation review. Launch reviewer agents to audit wiki pages, collect findings, file GitHub issues, and summarize results. You coordinate — the agents do the editorial work.

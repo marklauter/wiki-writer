@@ -1,4 +1,4 @@
-![wiki-writer](https://raw.githubusercontent.com/marklauter/wiki-writer/refs/heads/main/images/agent-logo.png)
+![wiki-writer](https://raw.githubusercontent.com/marklauter/wiki-agent/refs/heads/main/images/agent-logo.png)
 
 # wiki-writer
 

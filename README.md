@@ -2,9 +2,11 @@
 
 Claude Code toolset for GitHub wiki management: creation, editorial review, sync, and issue tracking. Works with any GitHub project.
 
+GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-writer automates wiki creation, editorial review, and sync so your docs stay current with every code change.
+
 ## How it works
 
-wiki-writer is a reusable workspace powered by [Claude Code](https://docs.anthropic.com/en/docs/claude-code). You open this project, tell it which GitHub repo you're working on, and it clones the source and wiki repos into a local `workspace/` directory. All commands then operate against whatever project is currently loaded.
+wiki-writer generates and maintains GitHub wiki pages from your source code. It runs as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) workspace — you open this project, tell it which repo you're working on, and it clones the source and wiki repos into a local `workspace/` directory. All commands then operate against whatever project is currently loaded.
 
 Nothing is permanent — cloned repos and config are gitignored. Switch projects any time by running `/up` with a different repo.
 
@@ -31,6 +33,7 @@ wiki-writer/
 1. **Clone wiki-writer:**
 
    ```bash
+   # Replace with your fork or clone URL
    git clone https://github.com/your-org/wiki-writer.git
    cd wiki-writer
    ```
@@ -49,15 +52,21 @@ wiki-writer/
 
    This clones the source repo and its wiki into `workspace/`, asks you about target audience and tone, and writes `workspace.config.yml`. All other commands use this config.
 
-4. **Work on the wiki** using the commands below.
+4. **Bootstrap the wiki (if new):**
 
-5. **Push your changes:**
+   ```
+   /init-wiki
+   ```
+
+5. **Work on the wiki** using the commands below.
+
+6. **Push your changes:**
 
    ```
    /save
    ```
 
-6. **Tear down when done:**
+7. **Tear down when done:**
 
    ```
    /down
@@ -77,22 +86,40 @@ Set up a project workspace. Clones (or pulls) the source repo and wiki repo into
 - `audience` — target audience for the wiki
 - `tone` — writing tone (e.g., reference-style, tutorial-style)
 
-If the target project has a `CLAUDE.md`, it reads that for project context. If the wiki already exists, it reads `_Sidebar.md` to understand the current structure.
+If the target project has a `CLAUDE.md` (project instructions for Claude Code), it reads that for project context. If the wiki already exists, it reads `_Sidebar.md` (the wiki navigation menu) to understand the current structure.
 
-Run `/up` without arguments to confirm which project is currently loaded.
+Run `/up` without arguments to confirm which project is currently loaded. To switch projects, run `/up` with a different repo — it tears down the current workspace first (checking for unsaved wiki changes), then sets up the new one.
+
+### `/init-wiki`
+
+Bootstrap a brand-new wiki from source code. Launches parallel explorer agents to understand the codebase, proposes a wiki structure for your approval, then spins up writer agents to populate every page. Only works on wikis with no existing content (beyond the default `Home.md`).
+
+What it does:
+
+1. **Explore the codebase** — five background agents examine architecture, public API, configuration, features, and usage examples.
+2. **Propose a page structure** — synthesizes explorer reports into a proposed page list (filename, title, description, key source files) and asks you to confirm or adjust.
+3. **Write all pages** — launches a parallel writer agent for each approved page. Each agent reads the relevant source files and follows the editorial guidance.
+4. **Generate sidebar and verify Home** — creates `_Sidebar.md` (wiki navigation menu) and verifies `Home.md`.
 
 ### `/down`
 
-Tear down the current workspace. Before removing anything, it checks for:
+Tear down the current workspace.
 
-- **Uncommitted changes** in the wiki repo — warns and asks to confirm
-- **Unpushed commits** in the wiki repo — warns and asks to confirm
+What it does:
 
-Then removes the cloned repos, config file, and (if empty) the `workspace/` directory.
+- Checks for **uncommitted changes** in the wiki repo — warns and asks to confirm
+- Checks for **unpushed commits** in the wiki repo — warns and asks to confirm
+- Removes the cloned repos, config file, and (if empty) the `workspace/` directory
 
 ### `/refresh-wiki`
 
-Updates stale wiki pages based on recent code changes. Reads the last 50 commits from the source repo, identifies behavioral changes, and edits the corresponding wiki pages to match current behavior.
+Sync wiki pages with recent source code changes.
+
+What it does:
+
+1. Reads the last 50 commits from the source repo
+2. Identifies behavioral changes that affect documentation
+3. Edits the corresponding wiki pages to match current behavior
 
 ### `/proofread-wiki`
 
@@ -105,16 +132,19 @@ Editorial review of wiki pages. Launches parallel reviewer agents that audit pag
 | `copy` | Grammar, punctuation, formatting, terminology |
 | `accuracy` | Verify claims and examples against source code |
 
-Findings are filed as GitHub issues with the `documentation` label. Run with specific pages or passes, or review everything at once.
+Files findings as GitHub issues with the `documentation` label. You can target specific pages or passes, or review everything at once.
 
 ### `/resolve-issues`
 
-The complement to `/proofread-wiki`. Reads open `documentation`-labeled GitHub issues, applies the recommended corrections to wiki pages, and closes the issues. You can pass specific issue numbers, a page name, or `-plan` to see what it would do without applying changes.
+Applies corrections from open `documentation`-labeled GitHub issues to wiki pages and closes them. You can pass specific issue numbers, a page name, or `-plan` to preview changes without applying them.
 
 ### `/save`
 
-Commits and pushes all wiki changes to GitHub. Only touches the wiki repo — never the source repo.
+Commit and push all wiki changes to GitHub.
 
-## Switching projects
+What it does:
 
-Run `/up` with a different repo. It tears down the current workspace first (checking for unsaved wiki changes), then sets up the new one.
+- Stages and commits all changes in the wiki repo
+- Pushes to the remote wiki on GitHub
+- Never touches the source repo
+

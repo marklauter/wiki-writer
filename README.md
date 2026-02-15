@@ -22,8 +22,9 @@ wiki-writer/
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
-- [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
-- Git configured with access to your GitHub repos
+- [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated with write access to issues
+- Git configured with push access to your GitHub wiki repos
+- Target repo must have its wiki enabled (create at least one page on GitHub to initialize it)
 
 ## Getting started
 
@@ -50,7 +51,13 @@ wiki-writer/
 
 4. **Work on the wiki** using the commands below.
 
-5. **Tear down when done:**
+5. **Push your changes:**
+
+   ```
+   /save
+   ```
+
+6. **Tear down when done:**
 
    ```
    /down
@@ -62,7 +69,7 @@ wiki-writer/
 
 ### `/up owner/repo`
 
-Set up a project workspace. Clones (or pulls) the source repo and wiki repo into `workspace/`, then interviews you for audience and tone preferences. Writes `workspace.config.yml` with:
+Set up a project workspace. Clones (or pulls) the source repo and wiki repo into `workspace/`, then asks for your audience and tone preferences. Writes `workspace.config.yml` with:
 
 - `repo` — GitHub `owner/repo` slug
 - `sourceDir` — path to cloned source repo
@@ -85,7 +92,7 @@ Then removes the cloned repos, config file, and (if empty) the `workspace/` dire
 
 ### `/refresh-wiki`
 
-Sync wiki pages with recent source code changes. Reads the last 50 commits from the source repo, identifies behavioral changes, maps them to wiki pages, and launches parallel agents to compare source against docs. Pages that are stale get updated automatically.
+Updates stale wiki pages based on recent code changes. Reads the last 50 commits from the source repo, identifies behavioral changes, and edits the corresponding wiki pages to match current behavior.
 
 ### `/proofread-wiki`
 
@@ -98,18 +105,16 @@ Editorial review of wiki pages. Launches parallel reviewer agents that audit pag
 | `copy` | Grammar, punctuation, formatting, terminology |
 | `accuracy` | Verify claims and examples against source code |
 
-Findings are filed as GitHub issues with the `docs` label. Run with specific pages or passes, or review everything at once.
+Findings are filed as GitHub issues with the `documentation` label. Run with specific pages or passes, or review everything at once.
 
 ### `/resolve-issues`
 
-The complement to `/proofread-wiki`. Reads open `docs`-labeled GitHub issues, applies the recommended corrections to wiki pages, and closes the issues. Supports filtering by issue number or page name. Use `--dry-run` to preview changes without applying them.
+The complement to `/proofread-wiki`. Reads open `documentation`-labeled GitHub issues, applies the recommended corrections to wiki pages, and closes the issues. You can pass specific issue numbers, a page name, or `-plan` to see what it would do without applying changes.
+
+### `/save`
+
+Commits and pushes all wiki changes to GitHub. Only touches the wiki repo — never the source repo.
 
 ## Switching projects
 
-To switch to a different project, run `/up` with the new repo:
-
-```
-/up owner/other-repo
-```
-
-This replaces the current workspace. If you want a clean slate first, run `/down` before `/up`.
+Run `/up` with a different repo. It tears down the current workspace first (checking for unsaved wiki changes), then sets up the new one.

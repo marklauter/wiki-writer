@@ -11,7 +11,7 @@ Audience, tone, writing principles: `CLAUDE.md`.
 
 ## Phase 0: Load config
 
-Read `wiki-writer.config.json` to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`. If the config file doesn't exist, tell the user to run `/wiki-setup owner/repo` first and stop.
+Read `wiki-writer.config.json` to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`. If the config file doesn't exist, tell the user to run `/up owner/repo` first and stop.
 
 ## Inputs
 

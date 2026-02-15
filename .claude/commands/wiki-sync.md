@@ -9,7 +9,7 @@ Sync wiki documentation with recent source code changes using a two-phase agent 
 
 ## Phase 0: Load config
 
-Read `wiki-writer.config.json` to get `repo`, `sourceDir`, and `wikiDir`. If the config file doesn't exist, tell the user to run `/wiki-setup owner/repo` first and stop.
+Read `wiki-writer.config.json` to get `repo`, `sourceDir`, and `wikiDir`. If the config file doesn't exist, tell the user to run `/up owner/repo` first and stop.
 
 ## Phase 1: Identify changes
 

@@ -1,5 +1,5 @@
 ---
-name: wiki-setup
+name: up
 description: Clone a GitHub repo and its wiki into the workspace. Sets up wiki-writer.config.json for all other commands.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---

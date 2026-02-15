@@ -4,6 +4,8 @@
       "Bash(gh api:*)",
       "Bash(gh repo view:*)",
       "Bash(git clone:*)",
+      "Bash(git pull:*)",
+      "Bash(git -C:*)",
       "Bash(wc:*)",
       "Bash(ls:*)",
       "Bash(gh issue list:*)",

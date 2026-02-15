@@ -11,7 +11,7 @@ Writing principles, target audience, and tone are defined in `CLAUDE.md`. Follow
 
 ## Phase 0: Load config
 
-Read `wiki-writer.config.json` to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`. If the config file doesn't exist, tell the user to run `/wiki-setup owner/repo` first and stop.
+Read `wiki-writer.config.json` to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`. If the config file doesn't exist, tell the user to run `/up owner/repo` first and stop.
 
 ## Inputs
 
@@ -91,7 +91,7 @@ After collecting all fixer agent results:
    ```
 2. For issues reported as **skipped** or **needs-clarification**, do NOT close them. Add a comment explaining why:
    ```bash
-   gh issue comment {number} --repo marklauter/DynamoDbLite --body "fix-docs skipped this issue: {reason}"
+   gh issue comment {number} --repo {repo} --body "wiki-resolve-issues skipped this issue: {reason}"
    ```
 
 Launch all close/comment commands **in parallel**.

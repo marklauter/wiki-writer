@@ -1,5 +1,5 @@
 ---
-name: fix-docs
+name: wiki-resolve-issues
 description: Read open docs issues from GitHub and apply corrections to wiki pages. The complement to review-docs.
 model: sonnet
 allowed-tools: Bash, Read, Grep, Glob, Task, Edit, TodoWrite

@@ -7,11 +7,15 @@ allowed-tools: Bash, Read, Grep, Glob, Task
 
 Sync wiki documentation with recent source code changes using a two-phase agent swarm.
 
+## Phase 0: Load config
+
+Read `wiki-writer.config.json` to get `repo`, `sourceDir`, and `wikiDir`. If the config file doesn't exist, tell the user to run `/wiki-setup owner/repo` first and stop.
+
 ## Phase 1: Identify changes
 
-1. Run `git -C DynamoDbLite log --oneline -50` to see recent commits.
+1. Run `git -C {sourceDir} log --oneline -50` to see recent commits.
 2. For each commit that changed behavior (skip pure refactors), identify the affected feature area.
-3. Read `DynamoDbLite.wiki/_Sidebar.md` to discover all wiki pages and their sections. Map affected feature areas to the appropriate pages.
+3. Read `{wikiDir}/_Sidebar.md` to discover all wiki pages and their sections. Map affected feature areas to the appropriate pages.
 
 4. Build a list of `(wiki-page, feature-area, relevant-source-files)` tuples that may need updates.
 
@@ -19,14 +23,14 @@ Sync wiki documentation with recent source code changes using a two-phase agent 
 
 For each potentially affected wiki page, launch a **background** Task agent (subagent_type: `Explore`, model: `sonnet`) that:
 - Reads the relevant source files for that feature area
-- Reads the corresponding wiki page in `DynamoDbLite.wiki/`
+- Reads the corresponding wiki page in `{wikiDir}/`
 - Compares them and produces a structured verdict:
   - `UP_TO_DATE` — wiki accurately reflects current source code
   - `STALE` — wiki is missing or misrepresents current behavior, with a description of what's wrong and what the correct content should be
 
 Launch all explorer agents **in parallel** using `run_in_background: true`. Then collect results from each.
 
-Also launch one explorer agent for `API-Parity.md` that checks whether new operations were added that aren't in the parity matrix.
+If the wiki has a parity or compatibility matrix page, also launch an explorer agent to check whether new operations were added that aren't in the matrix.
 
 ## Phase 3: Update swarm (parallel agents)
 

@@ -1,24 +1,28 @@
 # wiki-writer
 
-Claude Code toolset for GitHub wiki management: creation, editorial review, sync, and issue tracking. Works with any GitHub project.
+Claude Code toolset for GitHub wiki management. Works with any GitHub project.
 
-GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-writer automates wiki creation, editorial review, and sync so your docs stay current with every code change.
+GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-writer automates wiki creation, editorial review, sync, and issue tracking so your docs stay current with every code change.
 
 ## How it works
 
-wiki-writer generates and maintains GitHub wiki pages from your source code. It runs as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) workspace — you open this project, tell it which repo you're working on, and it clones the source and wiki repos into a local `workspace/` directory. All commands then operate against whatever project is currently loaded.
+wiki-writer generates and maintains GitHub wiki pages from your source code. It runs as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) workspace. You open this project, tell it which repo you're working on, and it clones the source and wiki repos into a local `workspace/` directory. All commands then operate against whatever project is currently loaded.
 
-Nothing is permanent — cloned repos and config are gitignored. Switch projects any time by running `/up` with a different repo.
+Multiple projects can be loaded at the same time. Run `/up` again to add another project. Nothing is permanent — cloned repos and configs are gitignored. Run `/down` to clean up a workspace when you no longer need it.
 
 ### Workspace layout
 
 ```
 wiki-writer/
 ├── .claude/              # Commands, skills, and guidance (checked in)
-├── workspace/            # Cloned repos (gitignored)
-│   ├── MyProject/        # Source repo
-│   └── MyProject.wiki/   # Wiki repo
-└── workspace.config.yml   # Current project config (gitignored)
+├── workspace/            # Cloned repos and configs (gitignored)
+│   ├── {owner}/
+│   │   ├── {repo}/       # Source repo
+│   │   └── {repo}.wiki/  # Wiki repo
+│   └── config/
+│       └── {owner}/
+│           └── {repo}/
+│               └── workspace.config.yml
 ```
 
 ## Prerequisites
@@ -47,10 +51,10 @@ wiki-writer/
 3. **Load a project:**
 
    ```
-   /up owner/repo
+   /up
    ```
 
-   This clones the source repo and its wiki into `workspace/`, asks you about target audience and tone, and writes `workspace.config.yml`. All other commands use this config.
+   This interviews you for the source repo clone URL, target audience, and tone, then clones the source repo and its wiki into `workspace/` and writes `workspace/config/{owner}/{repo}/workspace.config.yml`. All other commands use this config. Run `/up` again to load additional projects.
 
 4. **Bootstrap the wiki (if new):**
 
@@ -66,33 +70,32 @@ wiki-writer/
    /save
    ```
 
-7. **Tear down when done:**
-
-   ```
-   /down
-   ```
-
-   This checks for uncommitted or unpushed wiki changes before cleaning up.
+Optionally, run `/down` to clean up a workspace when you no longer need it.
 
 ## Commands
 
-### `/up owner/repo`
+### `/up`
 
-Set up a project workspace. Clones (or pulls) the source repo and wiki repo into `workspace/`, then asks for your audience and tone preferences. Writes `workspace.config.yml` with:
+Set up a project workspace. Does not accept arguments — interviews you for all required information. Can be run multiple times to load additional projects.
 
-- `repo` — GitHub `owner/repo` slug
-- `sourceDir` — path to cloned source repo
-- `wikiDir` — path to cloned wiki repo
-- `audience` — target audience for the wiki
-- `tone` — writing tone (e.g., reference-style, tutorial-style)
+What it does:
 
-If the target project has a `CLAUDE.md` (project instructions for Claude Code), it reads that for project context. If the wiki already exists, it reads `_Sidebar.md` (the wiki navigation menu) to understand the current structure.
-
-Run `/up` without arguments to confirm which project is currently loaded. To switch projects, run `/up` with a different repo — it tears down the current workspace first (checking for unsaved wiki changes), then sets up the new one.
+- Verifies GitHub CLI authentication (`gh auth status`)
+- Asks for the source repo clone URL (full HTTPS or SSH URL from GitHub), target audience, and tone
+- If a workspace already exists for the same repo, asks to confirm overwrite
+- Clones the source repo and wiki repo into `workspace/{owner}/`
+- Writes `workspace/config/{owner}/{repo}/workspace.config.yml` with:
+  - `repo` — GitHub `owner/repo` slug (parsed from the clone URL)
+  - `sourceDir` — path to cloned source repo (e.g., `workspace/{owner}/{repo}`)
+  - `wikiDir` — path to cloned wiki repo (e.g., `workspace/{owner}/{repo}.wiki`)
+  - `audience` — target audience for the wiki
+  - `tone` — writing tone (e.g., reference-style, tutorial-style)
+- Reads `CLAUDE.md` (project instructions for Claude Code) if the target project has one
+- Reads `_Sidebar.md` (the wiki navigation menu) if the wiki already exists
 
 ### `/init-wiki`
 
-Bootstrap a brand-new wiki from source code. Launches parallel explorer agents to understand the codebase, proposes a wiki structure for your approval, then spins up writer agents to populate every page. Only works on wikis with no existing content (beyond the default `Home.md`).
+Bootstrap a brand-new wiki from source code. Only works on wikis with no existing content (beyond the default `Home.md`). Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
 
 What it does:
 
@@ -103,27 +106,36 @@ What it does:
 
 ### `/down`
 
-Tear down the current workspace.
+Optional cleanup command. Not required between projects.
+
+Takes an optional repo identifier (`owner/repo` or `repo`) to remove a specific workspace. Pass `--all` to remove all workspaces.
 
 What it does:
 
 - Checks for **uncommitted changes** in the wiki repo — warns and asks to confirm
 - Checks for **unpushed commits** in the wiki repo — warns and asks to confirm
-- Removes the cloned repos, config file, and (if empty) the `workspace/` directory
+- Removes the source repo, wiki repo, and config for the selected workspace
 
 ### `/refresh-wiki`
 
-Sync wiki pages with recent source code changes.
+Sync wiki pages with recent source code changes. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
 
 What it does:
 
-1. Reads the last 50 commits from the source repo
-2. Identifies behavioral changes that affect documentation
-3. Edits the corresponding wiki pages to match current behavior
+1. Reads the last 50 commits from the source repo and identifies changed files
+2. Maps changed files to wiki pages via the sidebar structure
+3. Launches explorer agents to compare each affected wiki page against current source code
+4. Launches update agents to edit pages that are out of date
+
+Pass `-plan` to run the exploration without editing — shows which pages are stale and what would change.
 
 ### `/proofread-wiki`
 
-Editorial review of wiki pages. Launches parallel reviewer agents that audit pages across four passes:
+Review wiki pages for structure, clarity, accuracy, and style. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
+
+What it does:
+
+Launches parallel reviewer agents that audit pages across four passes:
 
 | Pass | Scope |
 |------|-------|
@@ -136,15 +148,22 @@ Files findings as GitHub issues with the `documentation` label. You can target s
 
 ### `/resolve-issues`
 
-Applies corrections from open `documentation`-labeled GitHub issues to wiki pages and closes them. You can pass specific issue numbers, a page name, or `-plan` to preview changes without applying them.
+Apply corrections from open `documentation`-labeled GitHub issues to wiki pages. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
+
+What it does:
+
+- Reads open issues with the `documentation` label
+- Applies the recommended corrections to the corresponding wiki pages
+- Closes each issue after the fix is applied
+
+You can pass specific issue numbers, a page name, or `-plan` to preview changes without applying them.
 
 ### `/save`
 
-Commit and push all wiki changes to GitHub.
+Commit and push all wiki changes to GitHub. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
 
 What it does:
 
 - Stages and commits all changes in the wiki repo
 - Pushes to the remote wiki on GitHub
 - Never touches the source repo
-

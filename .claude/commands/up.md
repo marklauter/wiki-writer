@@ -4,67 +4,70 @@ description: Clone a GitHub repo and its wiki into the workspace. Sets up worksp
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
-Set up a project workspace for wiki editing.
-
-## Input
-
-`$ARGUMENTS` is a GitHub repo slug in `owner/repo` format (e.g., `marklauter/DynamoDbLite`).
-
-If `$ARGUMENTS` is empty, read `workspace.config.yml` and confirm the current project. If the config file doesn't exist, ask the user for the repo slug.
+Set up a project workspace for wiki editing. This command does not accept arguments — it interviews the user for all required information. You can run `/up` multiple times to add workspaces for different repos — each gets its own isolated directory and config.
 
 ## Steps
 
-1. If `workspace.config.yml` exists, run the `/down` teardown flow first (see `down.md`). This checks for uncommitted and unpushed wiki changes before removing anything. If the user aborts teardown, stop — do not proceed with setup.
-
-2. Parse `$ARGUMENTS` to extract `owner` and `repo`.
-
-3. Clone or update the source repo:
+1. **Check GitHub authentication:**
    ```bash
-   if [ -d "workspace/{repo}" ]; then
-     git -C "workspace/{repo}" pull
-   else
-     mkdir -p workspace
-     git clone "https://github.com/{owner}/{repo}.git" "workspace/{repo}"
-   fi
+   gh auth status
    ```
+   If the user is not authenticated, tell them to run `gh auth login` to get authorized and then run `/up` again. Stop — do not proceed.
 
-4. Clone or update the wiki repo:
-   ```bash
-   if [ -d "workspace/{repo}.wiki" ]; then
-     git -C "workspace/{repo}.wiki" pull
-   else
-     git clone "https://github.com/{owner}/{repo}.wiki.git" "workspace/{repo}.wiki"
-   fi
-   ```
-   If the wiki clone fails (repo may not have a wiki yet), note this and continue — the user may need to create the first wiki page on GitHub to initialize it.
+2. **Check for existing workspace.** After the interview step provides the `{owner}` and `{repo}` values, check if `workspace/config/{owner}/{repo}/workspace.config.yml` already exists. If it does, warn the user that a workspace for `{owner}/{repo}` already exists and ask if they want to overwrite it. If they say no, stop. If they say yes, remove the existing workspace directories (`workspace/{owner}/{repo}`, `workspace/{owner}/{repo}.wiki`) and the config directory (`workspace/config/{owner}/{repo}`) before proceeding.
 
-5. Check if `workspace/{repo}/CLAUDE.md` exists. If it does, read it to understand the project's architecture, audience, and conventions.
+3. **Interview the user** for workspace configuration using AskUserQuestion. Collect the following:
 
-6. Check if `workspace/{repo}.wiki/_Sidebar.md` exists. If it does, read it to understand the existing wiki structure.
+   - **Source repo clone URL** — Ask the user to paste the full HTTPS or SSH clone URL as copied from GitHub (e.g., `https://github.com/owner/repo.git` or `git@github.com:owner/repo.git`). Parse the `owner` and `repo` name from the URL. If the URL doesn't parse cleanly, ask the user to correct it.
 
-7. Prompt the user to confirm or customize **all** workspace config values using AskUserQuestion. Present sensible defaults based on the repo slug and any context gathered from CLAUDE.md/README. The user can accept defaults or override any value.
+   - **Audience** — "Who is the target audience for this wiki?" Offer options like:
+     - "Developers integrating the library"
+     - "End users of the application"
+     - "Contributors to the project"
 
-   - **Repo slug**: Default `{owner}/{repo}`. Let the user confirm.
-   - **Source directory**: Default `workspace/{repo}`. Let the user override if they prefer a different path.
-   - **Wiki directory**: Default `workspace/{repo}.wiki`. Let the user override if they prefer a different path.
-   - **Audience**: "Who is the target audience for this wiki?" Suggest a default based on what you learned from the project's CLAUDE.md and README, if available. Let the user confirm or override.
-   - **Tone**: "What tone should the wiki use?" Offer options like "reference-style (assume domain familiarity)", "tutorial-style (step-by-step guidance)", or let the user describe their preference.
+   - **Tone** — "What tone should the wiki use?" Offer options like:
+     - "Reference-style (assume domain familiarity)"
+     - "Tutorial-style (step-by-step guidance)"
+     - "Conversational (friendly, accessible)"
 
-   You may batch these into one or two AskUserQuestion calls (up to 4 questions each) to keep the flow concise.
+   Batch these into one or two AskUserQuestion calls (up to 4 questions each).
 
-8. Write `workspace.config.yml` at the project root using the user's confirmed values:
+4. **Write `workspace/config/{owner}/{repo}/workspace.config.yml`** using the confirmed values:
    ```yaml
-   repo: "{confirmed repo slug}"
-   sourceDir: "{confirmed sourceDir}"
-   wikiDir: "{confirmed wikiDir}"
+   repo: "{owner}/{repo}"
+   sourceDir: "workspace/{owner}/{repo}"
+   wikiDir: "workspace/{owner}/{repo}.wiki"
    audience: "{confirmed audience}"
    tone: "{confirmed tone}"
    ```
 
-9. Confirm the workspace is ready:
-   - Source repo: cloned/updated at `{sourceDir}/`
-   - Wiki repo: cloned/updated at `{wikiDir}/`
-   - Config written to `workspace.config.yml`
+5. **Ensure directories exist:**
+   ```bash
+   mkdir -p workspace/{owner}
+   mkdir -p workspace/config/{owner}/{repo}
+   ```
+
+6. **Clone the source repo:**
+   ```bash
+   git clone "{clone_url}" "workspace/{owner}/{repo}"
+   ```
+   If the clone fails (repo doesn't exist, permission denied, etc.), report the error to the user and stop.
+
+7. **Clone the wiki repo.** Derive the wiki clone URL from the source clone URL using the same protocol:
+   - HTTPS source → `https://github.com/{owner}/{repo}.wiki.git`
+   - SSH source → `git@github.com:{owner}/{repo}.wiki.git`
+
+   ```bash
+   git clone "{wiki_clone_url}" "workspace/{owner}/{repo}.wiki"
+   ```
+   If the wiki clone fails (the repo may not have a wiki yet), tell the user they may need to create the first wiki page on GitHub to initialize it. Continue — the wiki repo is not required for setup to succeed.
+
+8. **Read project context.** If `workspace/{owner}/{repo}/CLAUDE.md` exists, read it to understand the project's architecture, audience, and conventions. If `workspace/{owner}/{repo}.wiki/_Sidebar.md` exists, read it to understand the existing wiki structure.
+
+9. **Confirm the workspace is ready:**
+   - Source repo: cloned at `workspace/{owner}/{repo}/`
+   - Wiki repo: cloned at `workspace/{owner}/{repo}.wiki/` (or note if the wiki clone failed)
+   - Config written to `workspace/config/{owner}/{repo}/workspace.config.yml`
    - All config values summarized
    - Summary of project context (from CLAUDE.md if available)
    - List of existing wiki pages (from _Sidebar.md if available)

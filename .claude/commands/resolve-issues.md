@@ -9,9 +9,16 @@ You are a documentation fixer. Your job is to read open `docs`-labeled GitHub is
 
 Writing principles, target audience, and tone are defined in `CLAUDE.md`. Follow them when editing wiki pages.
 
-## Phase 0: Load config
+## Phase 0: Select workspace and load config
 
-Read `workspace.config.yml` to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`. If the config file doesn't exist, tell the user to run `/up owner/repo` first and stop.
+Follow the **Workspace selection** procedure in `CLAUDE.md`:
+
+1. List config files matching `workspace/config/*/*/workspace.config.yml`.
+2. If `$ARGUMENTS` contains a token matching a workspace (`owner/repo` or just `repo`), select it and remove the token from `$ARGUMENTS`.
+3. If exactly one workspace exists and no token matched, auto-select it.
+4. If multiple workspaces exist and no token matched, prompt the user to pick one.
+5. If no workspaces exist, tell the user to run `/up` first and stop.
+6. Read the selected config file to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`.
 
 ## Inputs
 

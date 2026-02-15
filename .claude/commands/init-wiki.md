@@ -9,15 +9,21 @@ Bootstrap a wiki from scratch. Launch an explorer agent swarm to understand the 
 
 Audience, tone, writing principles: `CLAUDE.md`.
 
-## Phase 0: Load config and validate
+## Phase 0: Select workspace, load config, and validate
 
-1. Read `workspace.config.yml` to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`. If the config file doesn't exist, tell the user to run `/up owner/repo` first and stop.
+1. Follow the **Workspace selection** procedure in `CLAUDE.md`:
+   1. List config files matching `workspace/config/*/*/workspace.config.yml`.
+   2. If `$ARGUMENTS` contains a token matching a workspace (`owner/repo` or just `repo`), select it and remove the token from `$ARGUMENTS`.
+   3. If exactly one workspace exists and no token matched, auto-select it.
+   4. If multiple workspaces exist and no token matched, prompt the user to pick one.
+   5. If no workspaces exist, tell the user to run `/up` first and stop.
+   6. Read the selected config file to get `repo`, `sourceDir`, `wikiDir`, `audience`, and `tone`.
 
 2. Check that `{wikiDir}` exists:
    ```bash
    ls "{wikiDir}"
    ```
-   If the directory doesn't exist, tell the user to run `/up owner/repo` first and stop.
+   If the directory doesn't exist, tell the user to run `/up` first and stop.
 
 3. Check that the wiki is brand new. List all files in `{wikiDir}` (excluding `.git`):
    ```bash

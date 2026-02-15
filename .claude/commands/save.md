@@ -1,14 +1,20 @@
 ---
 name: save
 description: Commit and push wiki changes to GitHub. Never touches the source repo.
-allowed-tools: Bash, Read
+allowed-tools: Bash, Read, AskUserQuestion
 ---
 
 Commit and push all wiki changes to GitHub.
 
 ## Steps
 
-1. Read `workspace.config.yml` to get `wikiDir`. If the config file doesn't exist, tell the user there's nothing to save and stop.
+1. Follow the **Workspace selection** procedure in `CLAUDE.md`:
+   1. List config files matching `workspace/config/*/*/workspace.config.yml`.
+   2. If `$ARGUMENTS` contains a token matching a workspace (`owner/repo` or just `repo`), select it and remove the token from `$ARGUMENTS`.
+   3. If exactly one workspace exists and no token matched, auto-select it.
+   4. If multiple workspaces exist and no token matched, prompt the user to pick one.
+   5. If no workspaces exist, tell the user there's nothing to save and stop.
+   6. Read the selected config file to get `wikiDir`.
 
 2. Check for changes in the wiki repo:
    ```bash

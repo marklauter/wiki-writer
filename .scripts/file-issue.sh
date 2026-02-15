@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Files a GitHub issue. Reads repo from workspace.config.yml, labels from
-# ISSUE_TEMPLATE/wiki-docs.yml. Title as first arg, body via stdin.
+# .github/ISSUE_TEMPLATE/wiki-docs.yml. Title as first arg, body via stdin.
 #
 # Usage:
-#   .scripts/file-issue.sh "Title here" <<'EOF'
+#   .scripts/file-issue.sh "Title here" [config-path] <<'EOF'
 #   ### Page
 #   Query-and-Scan.md
 #   ...
@@ -12,12 +12,26 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-CONFIG="$SCRIPT_DIR/workspace.config.yml"
-TEMPLATE="$SCRIPT_DIR/ISSUE_TEMPLATE/wiki-docs.yml"
+if [[ -n "${2:-}" ]]; then
+  CONFIG="$2"
+else
+  # Auto-detect single workspace config
+  configs=("$SCRIPT_DIR"/workspace/config/*/*/workspace.config.yml)
+  if [[ ${#configs[@]} -eq 0 || ! -f "${configs[0]}" ]]; then
+    echo "error: no workspace config found. Run /up first." >&2
+    exit 1
+  fi
+  if [[ ${#configs[@]} -gt 1 ]]; then
+    echo "error: multiple workspaces found. Pass config path as second argument." >&2
+    exit 1
+  fi
+  CONFIG="${configs[0]}"
+fi
+TEMPLATE="$SCRIPT_DIR/.github/ISSUE_TEMPLATE/wiki-docs.yml"
 
 # --- config ---
 if [[ ! -f "$CONFIG" ]]; then
-  echo "error: workspace.config.yml not found. Run /up first." >&2
+  echo "error: workspace config not found at $CONFIG" >&2
   exit 1
 fi
 

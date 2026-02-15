@@ -14,7 +14,7 @@ Set up a project workspace for wiki editing. This command does not accept argume
    ```
    If the user is not authenticated, tell them to run `gh auth login` to get authorized and then run `/up` again. Stop — do not proceed.
 
-2. **Check for existing workspace.** After the interview step provides the `{owner}` and `{repo}` values, check if `workspace/config/{owner}/{repo}/workspace.config.yml` already exists. If it does, warn the user that a workspace for `{owner}/{repo}` already exists and ask if they want to overwrite it. If they say no, stop. If they say yes, remove the existing workspace directories (`workspace/{owner}/{repo}`, `workspace/{owner}/{repo}.wiki`) and the config directory (`workspace/config/{owner}/{repo}`) before proceeding.
+2. **Check for existing workspace.** After the interview step provides the `{owner}` and `{repo}` values, check if `workspace/config/{owner}/{repo}/workspace.config.yml` already exists. If it does, say "Already got that one, buddy" and stop. If the user wants to start fresh, they can run `/down {owner}/{repo}` first and then `/up` again.
 
 3. **Interview the user** for workspace configuration using AskUserQuestion. Collect the following:
 

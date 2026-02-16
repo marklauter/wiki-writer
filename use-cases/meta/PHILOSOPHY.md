@@ -76,6 +76,14 @@ This is a corollary of drive separation. Each actor has one drive. A creator's d
 
 Separate judgment from execution. Separate analysis from mutation.
 
+## Nouns, verbs, and objects
+
+- **Actors** are nouns. Proofreader, Creator, Corrector, Commissioning orchestrator. They're *who*.
+- **Use cases** are verbs. Populate New Wiki, Review Wiki Quality, Sync Wiki with Source Changes. They're *what happens*.
+- **Events** are nouns — past participles used as nouns. WikiPopulated, FindingFiled, WikiSynced. They're *what was produced*, the fact that something happened.
+
+If you catch yourself naming an actor with a verb or a use case with a noun, something is off.
+
 ## Extract, don't invent
 
 Use case design is Socratic. The designer asks questions; the domain expert has the answers. The designer's job is to draw out goals, constraints, and events that the expert already knows but hasn't structured — not to fabricate domain knowledge or infer requirements from silence.

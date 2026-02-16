@@ -19,7 +19,7 @@
 
 ## Invariants
 
-{Domain rules that must hold continuously — before, during, and after this use case. Not entry gates checked once. An agent that violates an invariant mid-scenario has failed, even if the final output looks correct.}
+{Domain rules that must hold continuously — before, during, and after this use case. Not entry gates checked once. An actor that violates an invariant mid-scenario has failed, even if the final output looks correct.}
 
 - {invariant}
 
@@ -37,7 +37,7 @@
 
 ## Scenario
 
-{Steps express intent and outcomes, not mechanics. "Wiki content is verified against current source" gives an agent room to find the best path. "Run grep on lines 1-50" does not. Domain events (marked with -->) signal meaningful state transitions — these are the published language between bounded contexts.}
+{Steps express intent and outcomes, not mechanics. "Wiki content is verified against current source" gives an actor room to find the best path. "Run grep on lines 1-50" does not. Domain events (marked with -->) signal meaningful state transitions — these are the published language between bounded contexts.}
 
 1. **{Actor}** — {Intent / outcome}
    --> {DomainEvent}
@@ -63,7 +63,7 @@
 
 {Actor boundary contracts. Every crossing point between actors or between an actor and a sub-system has a protocol. Define the input, the output, and who owns each side.}
 
-- **{protocol-name.md}** — step {number}, {input to / output from agent}
+- **{protocol-name.md}** — step {number}, {input to / output from actor}
 
 ## Notes
 

@@ -13,10 +13,10 @@ UC-07 (Publish Wiki Changes) is out of scope and excluded.
 - **Role:** Primary actor in every use case.
 - **Appears in:** UC-01, UC-02, UC-03, UC-04, UC-05, UC-06
 
-**Life goals:**
+**Goals:**
 
+- Provide software projects that are well-documented and trustworthy.
 - Be a responsible steward of project documentation.
-- Be someone whose projects are well-documented and trustworthy.
 
 **Experience goals:**
 
@@ -42,20 +42,14 @@ UC-07 (Publish Wiki Changes) is out of scope and excluded.
 
 Agents appear only in the editorial use cases (UC-01 through UC-04). Each agent has a single drive — a behavioral tendency it optimizes for. Drives are not goals; they are what make agents predictable and what reveal where they fall short. When a single drive cannot protect the primary actor's goal, separate agents exist. See [PHILOSOPHY.md](PHILOSOPHY.md), "Drives explain separation."
 
+Agents divide into two families defined by their relationship to wiki content — plus two that stand alone.
+
 ### Orchestrator
 
 - **Drive:** Coordination.
 - **Appears in:** UC-01 (`/init-wiki`), UC-02 (`/proofread-wiki`), UC-03 (`/resolve-issues`), UC-04 (`/refresh-wiki`)
 
-Resolves the workspace, absorbs editorial context, dispatches other agents, collects results, and presents summaries. The orchestrator makes no editorial judgments — it delegates comprehension to explorers, synthesis to the planner, production to writers, critique to reviewers, and remediation to fixers. Each command instantiates an orchestrator for its bounded context.
-
-### Explorer agents
-
-- **Drive:** Comprehension.
-- **Agent type:** `wiki-explorer`
-- **Appears in:** UC-01, UC-02
-
-Read-only examination of source code from distinct angles or domain facets. Each produces a structured report. In UC-01, reports feed the planning agent. In UC-02, summaries serve as shared context for reviewer agents. Explorers never modify files. The minimum facets in UC-02 are: public API surface, architecture, and configuration. Facet count is extensible per project.
+Resolves the workspace, absorbs editorial context, dispatches other agents, collects results, and presents summaries. The orchestrator makes no editorial judgments — it delegates comprehension to explorers, synthesis to the planner, production to creators, critique to reviewers, and remediation to correctors. Each command instantiates an orchestrator for its bounded context.
 
 ### Planning agent
 
@@ -65,17 +59,21 @@ Read-only examination of source code from distinct angles or domain facets. Each
 
 Receives all exploration reports and produces a coherent wiki structure — sections containing pages, each with a filename, title, description, and key source files. Turns raw understanding into a structure that serves the audience. Does not write content; it organizes. The proposed structure requires user approval before any pages are written.
 
-### Writer agents
+The planning agent reads reports and produces structured output like an assessor, but its output is a *plan*, not an *assessment*. Synthesis is categorically different from evaluation — it decides what *should* exist, not whether what exists is correct.
 
-- **Drive:** Production.
-- **Agent type:** `wiki-writer`
-- **Appears in:** UC-01
+### «abstract» Assessor
 
-Each receives a page assignment with source file references, audience, tone, and editorial guidance, then reads the source files and writes one wiki page. The writer optimizes for coverage and clarity, not for catching its own mistakes. This drive is insufficient to guarantee accuracy — which is why UC-02 exists with a separate critique drive.
+Receives an assignment from the orchestrator. Reads inputs. Applies judgment to produce structured output. **Never modifies wiki content. Never modifies source material.** The read-only constraint is the defining behavioral trait. Each child specializes in what it judges and what vocabulary its output uses, but the protocol with the orchestrator is the same: assignment in, structured assessment out.
 
-**Separation rationale:** An agent that both produces content and evaluates whether it produced well has two jobs and will do both poorly. Two agents with opposing drives produce better outcomes than one agent balancing competing concerns.
+#### Explorer agents
 
-### Reviewer agents
+- **Drive:** Comprehension.
+- **Agent type:** `wiki-explorer`
+- **Appears in:** UC-01, UC-02
+
+Read-only examination of source code from distinct angles or domain facets. Each produces a structured report. In UC-01, reports feed the planning agent. In UC-02, summaries serve as shared context for reviewer agents. Explorers never modify files. The minimum facets in UC-02 are: public API surface, architecture, and configuration. Facet count is extensible per project.
+
+#### Reviewer agents
 
 - **Drive:** Critique.
 - **Agent type:** `wiki-reviewer`
@@ -92,16 +90,44 @@ Each examines wiki content through one editorial lens. Four lenses represent dis
 
 A reviewer that finds nothing wrong reports clean content. The drive is to find real problems, not to generate findings.
 
-**Separation rationale:** The reviewer's critique drive complements the writer's production drive. The writer cannot reliably evaluate its own output because a single drive cannot serve competing concerns.
+#### Fact-checker agents
 
-### Deduplicator agent
+- **Drive:** Verification.
+- **Appears in:** UC-04
+
+Each reads an assigned wiki page, identifies all sources of truth (source code files, external URLs, linked resources), and verifies every factual claim. Claims are assessed as verified, inaccurate, or unverifiable. The fact-checker determines what is true — it does not fix anything, improve prose, or reorganize.
+
+The fact-checker's scope includes external references (URLs, linked docs, specifications) as sources of truth. This is broader than UC-02's accuracy lens, which is strictly source-code-grounded.
+
+#### Deduplicator agent
 
 - **Drive:** Filtering.
 - **Appears in:** UC-02
 
 Compares findings against existing open GitHub issues labeled `documentation`. Prevents duplicate issues without suppressing legitimate findings. Only drops a finding when it clearly matches an existing open issue about the same problem. A finding about a different section of the same page is not a duplicate.
 
-### Fixer agents
+### «abstract» Content Mutator
+
+Receives a page assignment with source file references from the orchestrator. Reads source files for grounding. **Modifies wiki content.** The write permission is the defining behavioral trait. Children differ in the nature of their judgment: creators synthesize what to say, correctors apply what someone else determined.
+
+| | Creator | Corrector |
+|---|---------|-----------|
+| Input | Plan assignment | Finding + recommendation |
+| Judgment | Synthetic — decides what to say | Mechanical — applies what to fix |
+| Authority | Self (constrained by plan) | The finding (constrained by source) |
+| On uncertainty | Must produce something | Must skip |
+
+**Separation rationale:** An agent that both produces content and evaluates whether it produced well has two jobs and will do both poorly. Two agents with opposing drives produce better outcomes than one agent balancing competing concerns. Production, critique, and remediation are three distinct drives — a creator cannot reliably evaluate its own output, and a corrector must not second-guess the reviewer or generate new content.
+
+#### Writer agents (Creator)
+
+- **Drive:** Production.
+- **Agent type:** `wiki-writer`
+- **Appears in:** UC-01
+
+Each receives a page assignment with source file references, audience, tone, and editorial guidance, then reads the source files and writes one wiki page. The writer optimizes for coverage and clarity, not for catching its own mistakes. This drive is insufficient to guarantee accuracy — which is why UC-02 exists with a separate critique drive.
+
+#### Fixer agents (Corrector)
 
 - **Drive:** Remediation.
 - **Agent type:** `wiki-writer` (reused)
@@ -109,18 +135,7 @@ Compares findings against existing open GitHub issues labeled `documentation`. P
 
 Each receives a wiki page, its associated findings, and source file references, then applies targeted corrections using the Edit tool. The fixer's drive is to apply known fixes to known problems — it does not discover new problems (UC-02's critique drive) and does not create new content (UC-01's production drive). When a recommendation contradicts source code or is ambiguous, the fixer skips rather than guesses.
 
-UC-03 calls these "Fixer agents" (drive: remediation). UC-04 calls them "Writer agents" (drive: correction). The drives are compatible — both optimize for making existing content accurate. The shared protocol enables agent reuse: both consume a page, a finding (what's wrong), a recommendation (what it should say), and a source reference (the authority).
-
-**Separation rationale:** Remediation is distinct from both production (UC-01) and critique (UC-02). The fixer trusts the finding and applies the fix. It does not second-guess the reviewer or generate new content.
-
-### Fact-checker agents
-
-- **Drive:** Verification.
-- **Appears in:** UC-04
-
-Each reads an assigned wiki page, identifies all sources of truth (source code files, external URLs, linked resources), and verifies every factual claim. Claims are assessed as verified, inaccurate, or unverifiable. The fact-checker determines what is true — it does not fix anything, improve prose, or reorganize.
-
-**Separation rationale:** Verification (determining truth), correction (applying fixes), and critique (finding editorial problems) are three distinct drives. UC-04 separates the fact-checker from the fixer just as UC-02 separates the reviewer from UC-03's fixer. The fact-checker's broader scope — external references as well as source code — distinguishes it from UC-02's accuracy lens, which is strictly source-code-grounded.
+UC-03 and UC-04 both consume the same protocol: a page, a finding (what's wrong), a recommendation (what it should say), and a source reference (the authority). The shared protocol enables agent reuse across bounded contexts.
 
 ---
 
@@ -150,15 +165,17 @@ Git provides repository cloning, change detection, and the post-hoc approval gat
 |-------|--------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 | User | (goal per UC) | P | P | P | P | P | P |
 | Orchestrator | Coordination | S | S | S | S | — | — |
-| Explorer agents | Comprehension | S | S | — | — | — | — |
 | Planning agent | Synthesis | S | — | — | — | — | — |
-| Writer agents | Production | S | — | — | — | — | — |
-| Reviewer agents | Critique | — | S | — | — | — | — |
-| Deduplicator | Filtering | — | S | — | — | — | — |
-| Fixer agents | Remediation | — | — | S | S | — | — |
-| Fact-checkers | Verification | — | — | — | S | — | — |
+| *«Assessor»* | *read-only judgment* | *S* | *S* | — | *S* | — | — |
+| ↳ Explorer agents | Comprehension | S | S | — | — | — | — |
+| ↳ Reviewer agents | Critique | — | S | — | — | — | — |
+| ↳ Fact-checker agents | Verification | — | — | — | S | — | — |
+| ↳ Deduplicator | Filtering | — | S | — | — | — | — |
+| *«Content Mutator»* | *wiki modification* | *S* | — | *S* | *S* | — | — |
+| ↳ Writer agents | Production | S | — | — | — | — | — |
+| ↳ Fixer agents | Remediation | — | — | S | S | — | — |
 
-**P** = primary actor, **S** = supporting actor, **—** = not involved
+**P** = primary actor, **S** = supporting actor, **—** = not involved, *italics* = abstract (not instantiated directly)
 
 | Sub-system | UC-01 | UC-02 | UC-03 | UC-04 | UC-05 | UC-06 |
 |------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|

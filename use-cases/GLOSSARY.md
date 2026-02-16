@@ -46,7 +46,7 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Fact-checker assessment** -- A structured report for one wiki page listing every factual claim checked, with verdict (verified, inaccurate, or unverifiable), quoted text, correct fact, and source reference.
 
-**Finding** -- A specific documentation problem identified by a reviewer, with quoted problematic text, a recommendation, and (for accuracy findings) a source file citation.
+**Finding** -- A specific documentation problem identified by a proofreader, with quoted problematic text, a recommendation, and (for accuracy findings) a source file citation.
 
 **Goal** -- The desired end state an actor pursues; includes its constraints (safety, accuracy) as intrinsic, not bolted-on preconditions.
 
@@ -74,9 +74,9 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Primary actor** -- The actor who pursues the goal of a use case; in this system, always the User; framed using Cooper's goal hierarchy (life, experience, end goals).
 
-**Proofread cache** -- Ephemeral storage (`.proofread/{repo}/`) for coordinating agents during a single UC-02 review run; created at start, cleaned up at end.
+**Proofread cache** -- Ephemeral storage (`.proofread/{repo}/`) for coordinating actors during a single UC-02 review run; created at start, cleaned up at end.
 
-**Protocol** -- An agent boundary contract defining the input, output, and ownership at every crossing point between agents or between an agent and a sub-system.
+**Protocol** -- An actor boundary contract defining the input, output, and ownership at every crossing point between actors or between an actor and a sub-system.
 
 **Published language** -- The integration contract between bounded contexts; in this system, the GitHub issue body conforming to `wiki-docs.yml` is the published language between DC-02 (Editorial Review) and DC-03 (Issue Resolution).
 

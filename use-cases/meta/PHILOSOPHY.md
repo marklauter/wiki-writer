@@ -14,7 +14,7 @@ Drives are what make actors predictable in a modeling sense. You know what an ac
 
 When a single drive cannot protect all the concerns at play, you need separate actors. The building owner's cost-minimization drive is insufficient to protect public safety — so the inspector exists. The creator's production drive is insufficient to guarantee accuracy — so the proofreader exists.
 
-This is not about malice. The owner isn't trying to hurt riders. The writer isn't trying to produce inaccurate content. But a single drive cannot serve competing concerns. Separation of actors is the structural answer to conflicts of interest between drives.
+This is not about malice. The owner isn't trying to hurt riders. The creator isn't trying to produce inaccurate content. But a single drive cannot serve competing concerns. Separation of actors is the structural answer to conflicts of interest between drives.
 
 Ask "whose drive is insufficient here, and what complementary drive is needed?"
 
@@ -34,13 +34,13 @@ Ask "what state of the world does the actor want?" not "what commands does the a
 
 ## Invariants over preconditions
 
-Domain rules are not entry gates you check once. They are constraints that must hold continuously — before, during, and after execution. An agent that violates an invariant mid-scenario has failed, even if the final output looks correct.
+Domain rules are not entry gates you check once. They are constraints that must hold continuously — before, during, and after execution. An actor that violates an invariant mid-scenario has failed, even if the final output looks correct.
 
 Express constraints as invariants, not as preconditions or validation steps.
 
 ## Domain events over return values
 
-Agents communicate through meaningful state transitions, not function returns. A drift assessment, a filed finding, a change report — these are domain events. They are the published language between bounded contexts.
+Actors communicate through meaningful state transitions, not function returns. A drift assessment, a filed finding, a change report — these are domain events. They are the published language between bounded contexts.
 
 Name them. Define them. They are the integration points of the system.
 
@@ -58,9 +58,9 @@ Frame failures as goal obstacles with recovery strategies, not try/catch blocks.
 
 ## Intent over mechanics
 
-Scenario steps express what is accomplished, not how. "Wiki content is verified against current source" gives an agent room to find the best path. "Run grep on lines 1-50 of each file" does not.
+Scenario steps express what is accomplished, not how. "Wiki content is verified against current source" gives an actor room to find the best path. "Run grep on lines 1-50 of each file" does not.
 
-The agent's job is to satisfy intent. The use case's job is to express it clearly.
+The actor's job is to satisfy intent. The use case's job is to express it clearly.
 
 ## Bounded contexts over shared models
 
@@ -68,7 +68,7 @@ Each use case lives in a bounded context with its own language and its own rules
 
 Respect boundaries. Define protocols at every crossing point.
 
-## Single responsibility for agents
+## Single responsibility for actors
 
 Creators write. Researchers explore. Proofreaders review. Orchestrators coordinate. An actor that both decides what to write and evaluates whether it wrote well has two jobs and will do both poorly.
 

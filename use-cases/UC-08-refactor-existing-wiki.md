@@ -6,7 +6,7 @@
 
 ## Known context
 
-Discovered during UC-01 design. The gap: if writer agents partially fail during `/init-wiki`, the wiki has content, so `/init-wiki` refuses to run again (new wikis only invariant). `/refresh-wiki` syncs facts but is not interactive -- it cannot restructure pages, add missing pages, or reorganize sections. There is no command for interactively restructuring an existing wiki with user approval.
+Discovered during UC-01 design. The gap: if creators partially fail during `/init-wiki`, the wiki has content, so `/init-wiki` refuses to run again (new wikis only invariant). `/refresh-wiki` syncs facts but is not interactive -- it cannot restructure pages, add missing pages, or reorganize sections. There is no command for interactively restructuring an existing wiki with user approval.
 
 This use case would cover:
 

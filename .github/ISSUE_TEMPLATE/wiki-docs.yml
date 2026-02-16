@@ -12,14 +12,14 @@ body:
       required: true
 
   - type: dropdown
-    id: pass
+    id: editorial-lens
     attributes:
-      label: Pass
-      description: Which editorial pass found this issue?
+      label: Editorial lens
+      description: Which editorial lens found this issue?
       options:
-        - Structural — organization, flow, gaps, redundancies
-        - Line edit — sentence-level clarity and tightening
-        - Copy edit — grammar, formatting, terminology consistency
+        - Structure — organization, flow, gaps, redundancies
+        - Line — sentence-level clarity and tightening
+        - Copy — grammar, formatting, terminology consistency
         - Accuracy — claims that contradict source code
     validations:
       required: true

@@ -137,16 +137,16 @@ Review wiki pages for structure, clarity, accuracy, and style. Auto-selects the 
 
 What it does:
 
-Launches parallel reviewer agents that audit pages across four passes:
+Launches parallel reviewer agents that audit pages through four editorial lenses:
 
-| Pass | Scope |
+| Lens | Scope |
 |------|-------|
-| `structural` | Organization, flow, gaps, redundancies |
-| `line` | Sentence-level clarity, tightening, transitions |
-| `copy` | Grammar, punctuation, formatting, terminology |
-| `accuracy` | Verify claims, examples, and behavior against source code |
+| Structure | Organization, flow, gaps, redundancies |
+| Line | Sentence-level clarity, tightening, transitions |
+| Copy | Grammar, punctuation, formatting, terminology |
+| Accuracy | Verify claims, examples, and behavior against source code |
 
-Files findings as GitHub issues with the `documentation` label. You can target specific pages or passes, or review everything at once.
+Files findings as GitHub issues with the `documentation` label.
 
 ### `/resolve-issues`
 

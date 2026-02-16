@@ -75,7 +75,7 @@ After the interview:
 - File names: `UC-{number}-{short-kebab-name}.md` (e.g., `UC-01-bootstrap-wiki.md`)
 - Use case IDs: `UC-{number}` (e.g., `UC-01`)
 - Domain events: PastTense (e.g., `WikiPageCreated`, `DriftDetected`)
-- Actors: capitalize role names (User, Orchestrator, wiki-explorer, wiki-writer)
+- Actors: capitalize role names using "doer" nouns (User, Commissioning orchestrator, Researchers, Proofreaders, Creators, Correctors). Agent type identifiers (wiki-explorer, wiki-writer) are implementation details, not actor names.
 
 ## Rules
 

@@ -54,8 +54,9 @@ Start here. Do not skip to scenarios.
 - Identify which protocols are referenced at agent boundaries.
 - Flag any gaps between the use case and the current implementation.
 
-## Interview style
+## Socratic interview style
 
+- Guide the user toward clarity through questions, not assertions.
 - Ask one phase at a time. Do not dump all questions at once.
 - Summarize what you heard before moving to the next phase.
 - If the user gives a task-oriented answer ("it runs git pull"), redirect to intent ("what state does that achieve?").

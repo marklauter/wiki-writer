@@ -4,8 +4,10 @@
 
 - **WorkspaceProvisioned** -- domain event from UC-05. Materialized as the config file on disk, not a message.
 - **WorkspaceDecommissioned** -- domain event from UC-06. Inverse of WorkspaceProvisioned. The workspace stops existing.
+- **WikiPopulated** -- domain event from UC-01. Wiki directory goes from empty to fully populated. Carries: repo identity, sections with pages (hierarchical), audience, tone, wiki dir path.
 - **Workspace identity** -- defined by the existence of `workspace/config/{owner}/{repo}/workspace.config.yml`. No config = no workspace.
 - **Drift Detection** -- bounded context for UC-04. Separate from exploration and correction.
+- **Wiki Creation** -- bounded context for UC-01. Separate from review (UC-02) and sync (UC-04).
 
 ## Cross-cutting invariants
 
@@ -24,6 +26,10 @@
 - **UC-07 (Publish Wiki Changes) is OUT OF SCOPE.** Users commit and push using their own git tools. The system does not own the publish workflow. Design decisions recorded before scoping out: semantic commit messages (diff-based), no confirmation gate, pull --rebase before push.
 - **No CLI-style flags on agent commands.** No `--force`, no `--all`. These are agent interactions, not C programs. Confirmation is done through typed repo name, not flags.
 - **Type-to-confirm pattern.** When destructive action threatens unpublished work, user types the repo name (e.g., `acme/WidgetLib`) to confirm. Established in UC-06.
+- **Repo freshness is user's responsibility.** System does not pull or verify clones are up to date. User owns this. Clarifies shared invariant "clones reflect remote state." Established in UC-01.
+- **Actors have drives.** PHILOSOPHY.md updated with three new principles: actors have drives, drives explain separation, goal conflicts spawn actors. Agent responsibilities sections now describe drives, not just tasks.
+- **Structural files vs. content pages.** Home.md, _Sidebar.md, _Footer.md are structural. "New wikis only" invariant ignores them. Established in UC-01.
+- **Partial completion design gap.** If writers partially fail in UC-01, user cannot re-run `/init-wiki`. Future UC for interactive wiki refactoring would address this.
 
 ## Implementation gaps found
 
@@ -40,5 +46,7 @@ See `C:\Users\Owner\.claude\projects\D--wiki-agent\memory\MEMORY.md` for the ful
 - File naming: `UC-{number}-{short-kebab-name}.md`
 - Em dashes (--) not en dashes in prose
 - "System" as actor name when no specific agent is involved (User-driven workflows)
-- Domain events in PastTense: WorkspaceProvisioned
+- "Orchestrator" as actor name when `/init-wiki` (or similar agent-orchestrated commands) coordinates agents
+- Domain events in PastTense: WorkspaceProvisioned, WikiPopulated
 - Obstacles keyed to scenario steps as `{Step}a`
+- Agent responsibilities section describes drives and why separation exists, not just task lists

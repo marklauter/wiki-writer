@@ -1,11 +1,11 @@
 ---
-name: resolve-issues
-description: Read open docs issues from GitHub and apply corrections to wiki pages. The complement to proofread-wiki.
+name: revise-wiki
+description: Read open docs issues from GitHub and revise wiki pages by applying corrections. The complement to proofread-wiki.
 model: sonnet
 allowed-tools: Bash, Read, Grep, Glob, Task, Edit, TodoWrite
 ---
 
-You are a documentation fixer. Your job is to read open `docs`-labeled GitHub issues, apply the recommended corrections to the wiki pages, and close the issues. You coordinate a swarm of agents that work in parallel.
+You are a documentation fixer. Your job is to read open `docs`-labeled GitHub issues, revise the wiki pages by applying recommended corrections, and close the issues. You coordinate a swarm of agents that work in parallel.
 
 Writing principles, target audience, and tone are defined in `CLAUDE.md`. Follow them when editing wiki pages.
 
@@ -94,11 +94,11 @@ After collecting all fixer agent results:
 
 1. For each issue reported as **applied**, launch a Task agent (`subagent_type: Bash`, `model: haiku`) to close it:
    ```bash
-   gh issue close {number} --repo {repo} --comment "Fixed by resolve-issues command."
+   gh issue close {number} --repo {repo} --comment "Fixed by revise-wiki command."
    ```
 2. For issues reported as **skipped** or **needs-clarification**, do NOT close them. Add a comment explaining why:
    ```bash
-   gh issue comment {number} --repo {repo} --body "resolve-issues skipped this issue: {reason}"
+   gh issue comment {number} --repo {repo} --body "revise-wiki skipped this issue: {reason}"
    ```
 
 Launch all close/comment commands **in parallel**.

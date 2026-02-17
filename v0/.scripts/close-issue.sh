@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Closes a GitHub issue with a comment, or adds a comment without closing.
-# Used by /resolve-issues after applying fixes.
+# Used by /revise-wiki after applying fixes.
 #
 # Usage:
 #   .scripts/close-issue.sh <issue-number> [--comment TEXT] [--skip TEXT] [config-path]
@@ -70,6 +70,6 @@ if [[ -n "$SKIP" ]]; then
 fi
 
 # --- close mode ---
-CLOSE_COMMENT="${COMMENT:-Fixed by resolve-issues command.}"
+CLOSE_COMMENT="${COMMENT:-Fixed by revise-wiki command.}"
 gh issue close "$ISSUE" --repo "$REPO" --comment "$CLOSE_COMMENT"
 echo "Closed issue #$ISSUE"

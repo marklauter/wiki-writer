@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Claude toolset for GitHub wiki management: creation, editorial review, drift resolution, and issue tracking. Works with any GitHub project.
+Claude toolset for GitHub wiki management: creation, editorial review, drift detection, and wiki revision. Works with any GitHub project.
 
 ## Reference
 

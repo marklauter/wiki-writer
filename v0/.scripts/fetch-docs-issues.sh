@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fetches open documentation issues from GitHub. Used by /proofread-wiki
-# (deduplication) and /resolve-issues (fetching issues to fix).
+# (deduplication) and /revise-wiki (fetching issues to fix).
 #
 # Usage:
 #   .scripts/fetch-docs-issues.sh [config-path] [--limit N] [--fields FIELDS]

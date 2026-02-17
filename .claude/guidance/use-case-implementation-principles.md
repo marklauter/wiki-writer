@@ -76,7 +76,7 @@ Each slash command maps to exactly one use case. The command file is the orchest
 | `/down` | UC-06 Decommission Workspace |
 | `/init-wiki` | UC-01 Populate New Wiki |
 | `/proofread-wiki` | UC-02 Review Wiki Quality |
-| `/resolve-issues` | UC-03 Resolve Documentation Issues |
+| `/revise-wiki` | UC-03 Revise Wiki |
 | `/refresh-wiki` | UC-04 Sync Wiki with Source Changes |
 | `/save` | UC-07 Publish Wiki Changes |
 

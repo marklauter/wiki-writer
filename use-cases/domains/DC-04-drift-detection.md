@@ -8,7 +8,7 @@ Owns the ongoing verification of factual claims in the wiki against their source
 
 - **Drift** -- A factual claim in the wiki that no longer matches its source of truth.
 - **Fact-checker assessment** -- A structured report for one wiki page listing every factual claim checked, with verdict (verified, inaccurate, unverifiable), quoted text, correct fact, and source reference.
-- **Correction assignment** -- The input to a corrector: page path, list of inaccurate claims with correct facts and source references, audience, tone, editorial guidance. Structurally compatible with [DC-03 Issue Resolution](DC-03-issue-resolution.md)'s correction assignments, enabling corrector reuse.
+- **Correction assignment** -- The input to a corrector: page path, list of inaccurate claims with correct facts and source references, audience, tone, editorial guidance. Structurally compatible with [DC-03 Wiki Revision](DC-03-wiki-revision.md)'s correction assignments, enabling corrector reuse.
 - **Sync report** -- A durable, time-stamped report showing corrections applied, pages verified, and claims that could not be checked. Stored at `workspace/artifacts/{owner}/{repo}/reports/sync/{date-time}-sync-report.md`.
 - **Source of truth** -- The authoritative reference for a factual claim. May be source code, an external URL, a linked specification, or other referenced material.
 
@@ -23,5 +23,5 @@ Owns the ongoing verification of factual claims in the wiki against their source
 ## Integration points
 
 - **Requires:** [DC-05 Workspace Lifecycle](DC-05-workspace-lifecycle.md) -- workspace must be provisioned.
-- **Shares with:** [DC-03 Issue Resolution](DC-03-issue-resolution.md) -- corrector protocol is structurally compatible.
+- **Shares with:** [DC-03 Wiki Revision](DC-03-wiki-revision.md) -- corrector protocol is structurally compatible.
 - **Gap:** Corrections may render DC-02 accuracy findings stale. Accepted trade-off in favor of keeping drift detection fast and independent.

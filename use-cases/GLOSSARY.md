@@ -78,9 +78,9 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Protocol** -- An actor boundary contract defining the input, output, and ownership at every crossing point between actors or between an actor and a sub-system.
 
-**Published language** -- The integration contract between bounded contexts; in this system, the GitHub issue body conforming to `documentation-issue.md` is the published language between DC-02 (Editorial Review) and DC-03 (Issue Resolution).
+**Published language** -- The integration contract between bounded contexts; in this system, the GitHub issue body conforming to `documentation-issue.md` is the published language between DC-02 (Editorial Review) and DC-03 (Wiki Revision).
 
-**Remediation** -- The drive of applying known fixes to known problems; distinguished from resolution (closing tickets) and from creation (producing new content).
+**Remediation** -- The drive of applying known corrections to known problems; distinguished from revision (the use case of revising wiki content from issue findings) and from creation (producing new content).
 
 **Safety check** -- Inspection of the wiki working tree for uncommitted changes and unpushed commits before decommissioning (UC-06); the gate that prevents silent destruction of unpublished work.
 

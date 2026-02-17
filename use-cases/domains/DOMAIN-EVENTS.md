@@ -24,10 +24,10 @@ The wiki directory has been populated with a complete set of documentation pages
 
 - **Bounded context:** [DC-02 Editorial Review](DC-02-editorial-review.md)
 - **Producer:** [UC-02](../UC-02-review-wiki-quality.md)
-- **Consumer:** [DC-03 Issue Resolution](DC-03-issue-resolution.md) via [UC-03](../UC-03-resolve-documentation-issues.md)
+- **Consumer:** [DC-03 Wiki Revision](DC-03-wiki-revision.md) via [UC-03](../UC-03-revise-wiki.md)
 - **Materialization:** GitHub issue with `documentation` label, conforming to `documentation-issue.md` schema
 
-A GitHub issue has been created for a documentation problem. This is the only published event that crosses a bounded context boundary as a formal contract. The issue body schema (`documentation-issue.md`) is the integration protocol between Editorial Review and Issue Resolution. GitHub is a sub-system -- the issue is the durable fact.
+A GitHub issue has been created for a documentation problem. This is the only published event that crosses a bounded context boundary as a formal contract. The issue body schema (`documentation-issue.md`) is the integration protocol between Editorial Review and Wiki Revision. GitHub is a sub-system -- the issue is the durable fact.
 
 ### Payload
 
@@ -59,8 +59,8 @@ The review process has completed. The user knows what is strong, what needs fixi
 
 ## DE-04 -- WikiRemediated
 
-- **Bounded context:** [DC-03 Issue Resolution](DC-03-issue-resolution.md)
-- **Producer:** [UC-03](../UC-03-resolve-documentation-issues.md)
+- **Bounded context:** [DC-03 Wiki Revision](DC-03-wiki-revision.md)
+- **Producer:** [UC-03](../UC-03-revise-wiki.md)
 - **Consumer:** User
 - **Materialization:** Summary presented to user; wiki files corrected on disk; GitHub issues closed
 

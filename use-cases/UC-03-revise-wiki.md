@@ -1,4 +1,4 @@
-# UC-03 -- Resolve Documentation Issues
+# UC-03 -- Revise Wiki
 
 ## Goal
 
@@ -6,9 +6,9 @@ Every actionable documentation problem tracked in GitHub Issues has its recommen
 
 ## Context
 
-- **Bounded context:** [DC-03 Issue Resolution](domains/DC-03-issue-resolution.md)
+- **Bounded context:** [DC-03 Wiki Revision](domains/DC-03-wiki-revision.md)
 - **Primary actor:** User
-- **Supporting actors:** [Fulfillment orchestrator](ACTOR-CATALOG.md#fulfillment-orchestrator) (`/resolve-issues` command), [Correctors](ACTOR-CATALOG.md#correctors) (one per wiki page with issues)
+- **Supporting actors:** [Fulfillment orchestrator](ACTOR-CATALOG.md#fulfillment-orchestrator) (`/revise-wiki` command), [Correctors](ACTOR-CATALOG.md#correctors) (one per wiki page with issues)
 - **Trigger:** The user has open documentation issues (typically produced by UC-02) and wants the recommended corrections applied to the wiki.
 
 ## Agent responsibilities
@@ -30,9 +30,9 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 - **Source code is readonly.** Correctors read source code to verify accuracy recommendations but never modify it. If an accuracy recommendation contradicts the source code, the corrector skips the issue -- it does not "fix" the source.
 - **Targeted edits, not rewrites.** Correctors use the Edit tool for surgical changes. Entire pages are not rewritten unless a structural issue specifically requires it. The existing page structure, voice, and content beyond the finding are preserved.
 - **Unstructured issues are skipped.** Issues that do not follow the `documentation-issue.md` template format (missing Page, Finding, or Recommendation fields) are not actionable by the system. They are skipped without comment -- the system does not attempt to interpret freeform issue text.
-- **Idempotency.** Running `/resolve-issues` twice is safe. If the quoted text from a finding no longer exists in the wiki (because a previous run or manual edit already addressed it), the corrector skips the issue. New issues filed since the last run are picked up.
+- **Idempotency.** Running `/revise-wiki` twice is safe. If the quoted text from a finding no longer exists in the wiki (because a previous run or manual edit already addressed it), the corrector skips the issue. New issues filed since the last run are picked up.
 - **Editorial guidance is current.** Correctors read the current editorial guidance and wiki instructions before applying fixes. Editorial standards may have evolved since the issue was filed. The applied fix conforms to current guidance, not just the recommendation text.
-- **No scope selection arguments.** The command remediates all open actionable documentation issues. There are no flags (`-plan`), issue number filters, or page name filters. If scope narrowing is ever needed, it happens through conversation, not arguments.
+- **No scope selection arguments.** The command applies corrections to all open actionable documentation issues. There are no flags (`-plan`), issue number filters, or page name filters. If scope narrowing is ever needed, it happens through conversation, not arguments.
 - **Repo freshness is the user's responsibility.** The system does not pull or verify that clones are up to date. The user is responsible for ensuring the workspace reflects the state they want corrected.
 
 ## Success outcome
@@ -54,7 +54,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 
 ## Scenario
 
-1. **User** -- Initiates remediation by running `/resolve-issues`.
+1. **User** -- Initiates revision by running `/revise-wiki`.
 2. **Fulfillment orchestrator** -- Resolves the workspace and loads config (repo identity, source dir, wiki dir, audience, tone).
 3. **Fulfillment orchestrator** -- Absorbs editorial context for the target project.
 4. **Fulfillment orchestrator** -- Fetches all open GitHub issues labeled `documentation` for this repository.
@@ -108,7 +108,7 @@ A corrector crashes, times out, or produces unusable results. The page it was re
 
 1. **Fulfillment orchestrator** -- Reports which pages failed and which were successfully corrected.
 2. **Fulfillment orchestrator** -- Proceeds with closing/commenting on issues for the pages that were successfully corrected.
-3. The summary reports which pages were not addressed. The user retries `/resolve-issues` to pick up the remaining issues.
+3. The summary reports which pages were not addressed. The user retries `/revise-wiki` to pick up the remaining issues.
 
 ### Step 8b -- Recommendation contradicts source code
 
@@ -150,14 +150,14 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions of publish
 
 ## Notes
 
-- **Remediation, not resolution.** The drive is applying fixes, not closing tickets. "Resolve issues" is the command name for discoverability, but the use case goal is wiki correction. This distinction matters: an agent that optimizes for closing issues would be tempted to close without fixing. An agent that optimizes for remediation applies the fix and lets closure follow naturally.
-- **Consuming UC-02's output.** UC-03 consumes FindingFiled events from UC-02 via GitHub Issues. The issue body conforming to `documentation-issue.md` is the published protocol. UC-03 has no dependency on UC-02's internal state (proofread cache, explorer summaries) -- only on the durable GitHub issues.
+- **Revision, not resolution.** The drive is applying corrections to the wiki, not closing tickets. The command is named `/revise-wiki` because this is what an editorial team does after proofreading: revise the manuscript. An agent that optimizes for closing issues would be tempted to close without fixing. An agent that optimizes for remediation applies the fix and lets closure follow naturally.
+- **Consuming UC-02's output.** UC-03 consumes FindingFiled events from UC-02 via GitHub Issues. The issue body conforming to `documentation-issue.md` is the published protocol. UC-03 has no dependency on UC-02's internal state (proofread cache, explorer summaries) -- only on the durable GitHub issues. Proofreading produces the marks; revision applies corrections.
 - **Unstructured issues are invisible.** Manually created issues that do not follow the template format are skipped silently. The system does not comment on them or mark them. This is a deliberate boundary: the system only processes what it can parse. Users who want manual issues resolved must do so manually.
 - **Conflicting edits on the same section.** When multiple issues affect the same section of a wiki page, the corrector must coordinate edits so they do not conflict. This is an implementation concern -- the corrector applies edits sequentially within a page, reading the page state between edits if necessary. Not modeled as a use-case-level obstacle because it is a coordination problem internal to the corrector, not a threat to the goal.
 - **`needs-clarification` label.** When a corrector skips an issue because the recommendation is ambiguous or needs human input, the fulfillment orchestrator adds a `needs-clarification` label to the GitHub issue (in addition to commenting). This makes ambiguous issues filterable and queryable on GitHub. The `documentation` label remains.
 - **Implementation gap: `close-issue.sh` does not support adding labels.** The use case requires adding a `needs-clarification` label to skipped issues, but the current script only supports closing with a comment or commenting without closing. The script needs a `--label` option or a separate `gh issue edit --add-label` call.
 - **Implementation gap: command file uses old terminology.** The command file references "Pass" in the parsed fields. The issue template uses "Editorial lens." The command file should be updated to match.
-- **Implementation gap: command file supports `-plan` and scope arguments.** The use case removes these. The command file should be updated to remediate all open actionable issues without scope selection.
+- **Implementation gap: command file supports `-plan` and scope arguments.** The use case removes these. The command file should be updated to apply corrections to all open actionable issues without scope selection.
 - **Implementation gap: command file uses `docs` label reference.** The command file description mentions "docs-labeled" issues. The actual label is `documentation` (matching the issue template). Terminology should be aligned.
 - **Implementation: editorial context sources.** Step 3 absorbs editorial context from: editorial guidance (`.claude/guidance/editorial-guidance.md`), wiki instructions (`.claude/guidance/wiki-instructions.md`), and the target project's CLAUDE.md if it exists (`{sourceDir}/CLAUDE.md`).
 - **Implementation: issue parsing.** Step 5 parses each issue body against the `documentation-issue.md` template schema, extracting structured fields: Page, Editorial lens, Severity, Finding, Recommendation, Source file, Notes. The field schema is defined in the Protocols section.

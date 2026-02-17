@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns the critique of existing wiki content across four editorial lenses: structure, line, copy, and accuracy. The review process surfaces problems as GitHub Issues -- it never modifies wiki content. This context produces the published protocol consumed by [DC-03 Issue Resolution](DC-03-issue-resolution.md).
+Owns the critique of existing wiki content across four editorial lenses: structure, line, copy, and accuracy. The review process surfaces problems as GitHub Issues -- it never modifies wiki content. This context produces the published protocol consumed by [DC-03 Wiki Revision](DC-03-wiki-revision.md).
 
 ## Ubiquitous language
 
@@ -24,5 +24,5 @@ Owns the critique of existing wiki content across four editorial lenses: structu
 ## Integration points
 
 - **Requires:** [DC-05 Workspace Lifecycle](DC-05-workspace-lifecycle.md) -- workspace must be provisioned.
-- **Publishes to:** [DC-03 Issue Resolution](DC-03-issue-resolution.md) -- findings filed as GitHub issues are consumed by correctors.
+- **Publishes to:** [DC-03 Wiki Revision](DC-03-wiki-revision.md) -- findings filed as GitHub issues are consumed by correctors.
 - **Gap:** Accuracy findings may become stale if DC-04 (Drift Detection) independently corrects the same inaccuracy. Accepted trade-off.

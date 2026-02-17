@@ -1,26 +1,27 @@
-![wiki-writer](https://raw.githubusercontent.com/marklauter/wiki-agent/refs/heads/main/images/agent-logo.png)
+![wiki-agent](https://raw.githubusercontent.com/marklauter/wiki-agent/refs/heads/main/images/agent-logo.png)
 
 # wiki-agent
 
-Claude Code toolset for GitHub wiki management. Works with any GitHub project.
+Claude Code angetic toolset for GitHub wiki management. Works with any GitHub project.
 
-GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-writer automates wiki creation, editorial review, sync, and issue tracking so your docs stay current with every code change.
+GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-agent automates wiki creation, editorial review, drift detection, and issue tracking so documentation stays current.
 
 ## How it works
 
-wiki-writer generates and maintains GitHub wiki pages from your source code. It runs as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) workspace. You open this project, tell it which repo you're working on, and it clones the source and wiki repos into a local `workspace/` directory. All commands then operate against whatever project is currently loaded.
+Wiki-agent generates and maintains GitHub wiki pages from your source code. It runs as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) workspace. You open this project, tell it which repo you're working on, and it clones the source and wiki repos into a local `workspace/` directory. All commands operate against whatever project is currently loaded.
 
 Multiple projects can be loaded at the same time. Run `/up` again to add another project. Nothing is permanent — cloned repos and configs are gitignored. Run `/down` to clean up a workspace when you no longer need it.
 
 ### Workspace layout
 
 ```
-wiki-writer/
-├── .claude/              # Commands, skills, and guidance (checked in)
+wiki-agent/
+├── .claude/              # Commands, guidance, and forms (checked in)
+├── .scripts/             # Shell scripts for deterministic operations (checked in)
 ├── workspace/            # Cloned repos and artifacts (gitignored)
 │   ├── {owner}/
-│   │   ├── {repo}/       # Source repo
-│   │   └── {repo}.wiki/  # Wiki repo
+│   │   ├── {repo}/       # Source repo (readonly)
+│   │   └── {repo}.wiki/  # Wiki repo (mutable)
 │   └── artifacts/
 │       └── {owner}/
 │           └── {repo}/
@@ -37,12 +38,11 @@ wiki-writer/
 
 ## Getting started
 
-1. **Clone wiki-writer:**
+1. **Clone wiki-agent:**
 
    ```bash
-   # Replace with your fork or clone URL
-   git clone https://github.com/your-org/wiki-writer.git
-   cd wiki-writer
+   git clone https://github.com/marklauter/wiki-agent.git
+   cd wiki-agent
    ```
 
 2. **Open it in Claude Code:**
@@ -57,7 +57,7 @@ wiki-writer/
    /up
    ```
 
-   This interviews you for the source repo clone URL, target audience, and tone, then clones the source repo and its wiki into `workspace/` and writes `workspace/artifacts/{owner}/{repo}/workspace.config.md`. All other commands use this config. Run `/up` again to load additional projects.
+   Interviews you for the source repo clone URL, target audience, and tone. Clones the source and wiki repos into `workspace/` and writes a workspace config. All other commands use this config.
 
 4. **Bootstrap the wiki (if new):**
 
@@ -67,106 +67,73 @@ wiki-writer/
 
 5. **Work on the wiki** using the commands below.
 
-6. **Push your changes:**
-
-   ```
-   /save
-   ```
-
-Optionally, run `/down` to clean up a workspace when you no longer need it.
+6. **Publish your changes** by committing and pushing in the wiki repo with your own git tools.
 
 ## Commands
 
 ### `/up`
 
-Set up a project workspace. Does not accept arguments — interviews you for all required information. Can be run multiple times to load additional projects.
+Provision a project workspace. Interviews you for all required information — does not accept arguments.
 
-What it does:
-
-- Verifies GitHub CLI authentication (`gh auth status`)
-- Asks for the source repo clone URL (full HTTPS or SSH URL from GitHub), target audience, and tone
+- Verifies GitHub CLI authentication
+- Asks for the source repo clone URL, target audience, and tone
+- Validates that both the source repo and wiki repo exist on GitHub
+- If the wiki doesn't exist yet, provides instructions for creating it through the GitHub web UI and waits
+- Clones both repos and writes `workspace/artifacts/{owner}/{repo}/workspace.config.md`
 - If a workspace already exists for the same repo, stops and tells you to run `/down` first
-- Clones the source repo and wiki repo into `workspace/{owner}/`
-- Writes `workspace/artifacts/{owner}/{repo}/workspace.config.md` with:
-  - `repo` — GitHub `owner/repo` slug (parsed from the clone URL)
-  - `sourceDir` — path to cloned source repo (e.g., `workspace/{owner}/{repo}`)
-  - `wikiDir` — path to cloned wiki repo (e.g., `workspace/{owner}/{repo}.wiki`)
-  - `audience` — target audience for the wiki
-  - `tone` — writing tone (e.g., reference-style, tutorial-style)
-- Reads `CLAUDE.md` (project instructions for Claude Code) if the target project has one
-- Reads `_Sidebar.md` (the wiki navigation menu) if the wiki already exists
 
 ### `/init-wiki`
 
-Bootstrap a brand-new wiki from source code. Only works on wikis with no existing content (beyond the default `Home.md`). Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
+Populate a brand-new wiki from source code. Only works on wikis with no existing content pages. Uses the workspace selection protocol (auto-selects if one workspace loaded, prompts if multiple).
 
-What it does:
+1. **Explore the codebase** — researchers examine the source code across multiple facets (architecture, public API, configuration, features, usage).
+2. **Propose a page structure** — a developmental editor synthesizes research into a proposed wiki plan and presents it for your approval. No pages are written until you're satisfied with the plan.
+3. **Write all pages** — parallel creators write each approved page from source code.
+4. **Generate sidebar** — creates `_Sidebar.md` and verifies `Home.md`.
 
-1. **Explore the codebase** — five background agents examine architecture, public API, configuration, features, and usage examples.
-2. **Propose a page structure** — synthesizes explorer reports into a proposed page list (filename, title, description, key source files) and asks you to confirm or adjust.
-3. **Write all pages** — launches a parallel writer agent for each approved page. Each agent reads the relevant source files and follows the editorial guidance.
-4. **Generate sidebar and verify Home** — creates `_Sidebar.md` (wiki navigation menu) and verifies `Home.md`.
-
-### `/down`
-
-Optional cleanup command. Not required between projects.
-
-Takes an optional repo identifier (`owner/repo` or `repo`) to remove a specific workspace. Pass `--all` to remove all workspaces.
-
-What it does:
-
-- Checks for **uncommitted changes** in the wiki repo — warns and asks to confirm
-- Checks for **unpushed commits** in the wiki repo — warns and asks to confirm
-- Removes the source repo, wiki repo, and config for the selected workspace
-
-### `/refresh-wiki`
-
-Sync wiki pages with recent source code changes. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
-
-What it does:
-
-1. Reads the last 50 commits from the source repo and identifies changed files
-2. Maps changed files to wiki pages via the sidebar structure
-3. Launches explorer agents to compare each affected wiki page against current source code
-4. Launches update agents to edit pages that are out of date
-
-Pass `-plan` to run the exploration without editing — shows which pages are stale and what would change.
+Content has not been independently verified for accuracy at this point. Run `/proofread-wiki` next.
 
 ### `/proofread-wiki`
 
-Review wiki pages for structure, clarity, accuracy, and style. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
+Review wiki pages for quality. Uses the workspace selection protocol. Never edits wiki files — review only.
 
-What it does:
-
-Launches parallel reviewer agents that audit pages through four editorial lenses:
+Dispatches parallel proofreaders that audit pages through four editorial lenses:
 
 | Lens | Scope |
 |------|-------|
-| Structure | Organization, flow, gaps, redundancies |
+| Structure | Organization, flow, gaps, redundancies across the whole wiki |
 | Line | Sentence-level clarity, tightening, transitions |
-| Copy | Grammar, punctuation, formatting, terminology |
+| Copy | Grammar, punctuation, formatting, terminology consistency |
 | Accuracy | Verify claims, examples, and behavior against source code |
 
-Files findings as GitHub issues with the `documentation` label.
+Findings are deduplicated against existing open issues, then filed as individual GitHub issues with the `documentation` label. Run `/revise-wiki` to apply corrections.
 
-### `/resolve-issues`
+### `/revise-wiki`
 
-Apply corrections from open `documentation`-labeled GitHub issues to wiki pages. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
+Apply corrections from open `documentation`-labeled GitHub issues. Uses the workspace selection protocol.
 
-What it does:
-
-- Reads open issues with the `documentation` label
-- Applies the recommended corrections to the corresponding wiki pages
+- Reads all open issues labeled `documentation`
+- Dispatches correctors to apply recommended fixes to wiki pages
 - Closes each issue after the fix is applied
+- Adds `needs-clarification` to ambiguous issues and skips them
+- Issues lacking structured page/finding/recommendation fields are skipped silently
 
-You can pass specific issue numbers, a page name, or `-plan` to preview changes without applying them.
+Targeted edits only — never creates new pages or rewrites existing ones.
 
-### `/save`
+### `/refresh-wiki`
 
-Commit and push all wiki changes to GitHub. Auto-selects the workspace if only one is loaded, or prompts if multiple are loaded. Pass `owner/repo` or `repo` to target a specific workspace.
+Sync wiki pages with current source code. Uses the workspace selection protocol.
 
-What it does:
+1. Dispatches fact-checkers across all content pages. Every factual claim is verified against source code and external references (URLs, linked docs, specifications).
+2. Dispatches correctors to fix pages where drift is detected.
+3. Writes a sync report to `workspace/artifacts/{owner}/{repo}/reports/`.
 
-- Stages and commits all changes in the wiki repo
-- Pushes to the remote wiki on GitHub
-- Never touches the source repo
+Recent source changes are used as priority context but do not limit scope — all claims on all pages are checked. Corrections are applied directly. Review changes with `git diff` and revert if needed.
+
+### `/down`
+
+Remove a project workspace. Uses the workspace selection protocol.
+
+- Checks for uncommitted changes and unpushed commits in the wiki repo
+- If unsaved work exists, requires you to type the repo name to confirm deletion
+- Removes the source clone, wiki clone, config, reports, and any cached artifacts

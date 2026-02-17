@@ -70,14 +70,14 @@ Create `.claude/guidance/protocols/` with 7 protocol files. Each follows a consi
    - Required fields: `wiki_page`, `source_files[]`, `changes[]`, `impact_description`, `correct_content`
 
 6. **`edit-instruction.md`** — Change report format. Shared across contexts.
-   - Producers: `wiki-writer` (refresh-wiki, resolve-issues edit mode)
+   - Producers: `wiki-writer` (refresh-wiki, revise-wiki edit mode)
    - Consumer: orchestrator (for logging, error checking, and downstream decisions like issue closing)
    - Writer applies edits directly via `Edit`, then returns a report of what changed.
    - Required report fields: `file`, `old_string`, `new_string`, `rationale`
 
-7. **`issue-body.md`** — Published Language between proofread-wiki and resolve-issues.
+7. **`issue-body.md`** — Published Language between proofread-wiki and revise-wiki.
    - Producer: proofread-wiki (filing via `file-issue.sh`)
-   - Consumer: resolve-issues (parsing)
+   - Consumer: revise-wiki (parsing)
    - Defines: issue title format, body sections (`Page`, `Location`, `Category`, `Finding`, `Recommendation`, `Source evidence`)
 
 **Files:** `.claude/guidance/protocols/` (7 new files)
@@ -132,7 +132,7 @@ Create `.claude/guidance/operations/git-workflow.md`:
 
 **Fixes:** Fusion §2.1, §2.2
 
-Replace all inline workspace selection steps (in init-wiki, proofread-wiki, refresh-wiki, resolve-issues, save, down) with a call to `resolve-workspace.sh`:
+Replace all inline workspace selection steps (in init-wiki, proofread-wiki, refresh-wiki, revise-wiki, save, down) with a call to `resolve-workspace.sh`:
 
 ```bash
 eval "$(bash .scripts/resolve-workspace.sh $ARGUMENTS)"
@@ -146,7 +146,7 @@ Each command handles exit codes:
 
 Remove all divergent inline workspace selection logic. The script implements the canonical algorithm from CLAUDE.md (including the "no configs → stop" check).
 
-**Files:** `.claude/commands/init-wiki.md`, `.claude/commands/proofread-wiki.md`, `.claude/commands/refresh-wiki.md`, `.claude/commands/resolve-issues.md`, `.claude/commands/save.md`, `.claude/commands/down.md`
+**Files:** `.claude/commands/init-wiki.md`, `.claude/commands/proofread-wiki.md`, `.claude/commands/refresh-wiki.md`, `.claude/commands/revise-wiki.md`, `.claude/commands/save.md`, `.claude/commands/down.md`
 
 ### Task 1B: `.gitignore` — add generated directories
 
@@ -198,7 +198,7 @@ Now that most bash operations are in `.scripts/`, the primary permission needed 
 - `Bash(bash .scripts/*:*)` — all commands invoke scripts this way
 
 **Remaining inline git/gh commands** (not yet in scripts):
-- `Bash(git -C *:*)` — pull --ff-only / pull --rebase (used by refresh-wiki, resolve-issues, save)
+- `Bash(git -C *:*)` — pull --ff-only / pull --rebase (used by refresh-wiki, revise-wiki, save)
 - `Bash(git clone:*)` — only if commands ever clone outside `clone-workspace.sh`
 - `Bash(gh auth status:*)` — used by `/up` pre-check
 - `Bash(gh repo view:*)` — used by `/up` validation (Wave 5)
@@ -289,9 +289,9 @@ Also fix:
 
 **Files:** `.claude/commands/refresh-wiki.md`
 
-### Task 2D: `resolve-issues` — use wiki-writer agents, orchestrator closes issues
+### Task 2D: `revise-wiki` — use wiki-writer agents, orchestrator closes issues
 
-**Fixes:** Fusion §1.1 (resolve-issues), §1.3
+**Fixes:** Fusion §1.1 (revise-wiki), §1.3
 
 Restructure to reference custom agents and protocols:
 
@@ -299,7 +299,7 @@ Restructure to reference custom agents and protocols:
 - Phase 2 (fix): Launch `wiki-writer` agents (edit mode). Each given an issue (parsed per `issue-body.md` protocol) + the wiki page path + source file paths + editorial guidance references. Each writer reads the page, applies edits directly via `Edit`, and returns a **Change Report** (protocol: `edit-instruction.md`). Orchestrator collects confirmations via `TaskOutput`.
 - Phase 3 (close): Orchestrator calls `bash .scripts/close-issue.sh <issue#> --comment "<summary>"` for each fixed issue (or `--skip "<reason>"` for skipped ones). Uses the change reports from Phase 2 to construct the closing comment.
 
-**Files:** `.claude/commands/resolve-issues.md`
+**Files:** `.claude/commands/revise-wiki.md`
 
 ---
 
@@ -327,9 +327,9 @@ The script already handles the HEAD~N edge case — if the repo has fewer than N
 
 **Files:** `.claude/commands/refresh-wiki.md`
 
-### Task 3B: `resolve-issues` — pull before editing, push-then-close via scripts
+### Task 3B: `revise-wiki` — pull before editing, push-then-close via scripts
 
-**Fixes:** Fusion §3.1 (resolve-issues), §3.5
+**Fixes:** Fusion §3.1 (revise-wiki), §3.5
 
 Add to Phase 0, referencing `operations/git-workflow.md`:
 1. `git -C {wikiDir} pull --ff-only`
@@ -355,7 +355,7 @@ Replace the current Phase 3 (close issues immediately) with a push-then-close fl
 
 This guarantees issues are only closed after edits are live. The LLM's only role in the push-close flow is generating the commit message and per-issue summaries.
 
-**Files:** `.claude/commands/resolve-issues.md`
+**Files:** `.claude/commands/revise-wiki.md`
 
 ### Task 3C: `/save` — use safety check + wiki-save scripts
 
@@ -389,21 +389,21 @@ Rewrite `/save` flow using scripts, referencing `operations/git-workflow.md`:
 **Parallelism:** 4 independent tasks (one per swarm command).
 **Depends on:** Waves 2–3 (command structure and git workflow are stable).
 
-### Task 4A: `resolve-issues` — guidance, tone, edge cases, and retry
+### Task 4A: `revise-wiki` — guidance, tone, edge cases, and retry
 
-**Fixes:** Fusion §8.1, §8.2, §8.3, §8.4, §9.5, §9.6, §9.7, §9.8, §7.1 (resolve-issues)
+**Fixes:** Fusion §8.1, §8.2, §8.3, §8.4, §9.5, §9.6, §9.7, §9.8, §7.1 (revise-wiki)
 
 1. Fixer agent prompt references `editorial/editorial-guidance.md` and `editorial/wiki-instructions.md` (not CLAUDE.md).
 2. Remove hardcoded "reference-style" tone — pass `{tone}` from workspace config to agent prompt.
 3. Fix description: `docs` → `documentation`.
-4. Fix constraint name: `fix-docs` → `resolve-issues`.
+4. Fix constraint name: `fix-docs` → `revise-wiki`.
 5. Add early exit when zero issues found.
 6. Issue body parsing now uses `issue-body.md` protocol (from Wave 2) — validate required sections present.
 7. Prefix source file paths with `{sourceDir}/`.
 8. Sanitize issue body text before passing to `close-issue.sh --comment` argument (quote properly or use a temp file if text contains shell metacharacters).
 9. Add retry-once for failed fixer agents (§7.1).
 
-**Files:** `.claude/commands/resolve-issues.md`
+**Files:** `.claude/commands/revise-wiki.md`
 
 ### Task 4B: `refresh-wiki` — mapping, dedup, edge cases, and retry
 
@@ -474,11 +474,11 @@ Rewrite `/save` flow using scripts, referencing `operations/git-workflow.md`:
 
 **Files:** `.claude/commands/up.md`, `.claude/commands/down.md`
 
-### Task 5B: `resolve-issues` and `save` minor fixes
+### Task 5B: `revise-wiki` and `save` minor fixes
 
 **Fixes:** Fusion §10.4, §10.5, §10.11, §10.12, §9.19, §9.20
 
-`resolve-issues`:
+`revise-wiki`:
 - The `--limit 100` issue is resolved — `fetch-docs-issues.sh` defaults to 200. If a custom limit is needed, pass `--limit N` to the script.
 - Add instruction to read `{sourceDir}/CLAUDE.md`.
 
@@ -486,7 +486,7 @@ Rewrite `/save` flow using scripts, referencing `operations/git-workflow.md`:
 - Add commit message guidance (imperative mood, ≤72 chars first line, summarize if many files).
 - The `git add -A` concern is resolved — `wiki-save.sh` handles staging. If selective staging is needed, update the script or add a `--files` flag.
 
-**Files:** `.claude/commands/resolve-issues.md`, `.claude/commands/save.md`
+**Files:** `.claude/commands/revise-wiki.md`, `.claude/commands/save.md`
 
 ### Task 5C: `refresh-wiki` and `proofread-wiki` minor fixes
 
@@ -552,7 +552,7 @@ refresh-wiki ───────────→ wiki-explorer ──→ drift-
                           wiki-writer  ──→ edit-instruction.md
                           list-source-changes.sh (data gathering)
 
-resolve-issues ─────────→ wiki-writer  ──→ edit-instruction.md
+revise-wiki ────────────→ wiki-writer  ──→ edit-instruction.md
                           (issue input)←── issue-body.md
                           fetch-docs-issues.sh → wiki-save.sh → close-issue.sh
 
@@ -591,7 +591,7 @@ Each file is touched by at most one task per wave. Wave 1 uses two sequential ba
 | `init-wiki.md` | — | 1A | 2A | — | 4D | — |
 | `proofread-wiki.md` | — | 1A→1C | 2B | — | 4C | 5C |
 | `refresh-wiki.md` | — | 1A | 2C | 3A | 4B | 5C |
-| `resolve-issues.md` | — | 1A | 2D | 3B | 4A | 5B |
+| `revise-wiki.md` | — | 1A | 2D | 3B | 4A | 5B |
 | `save.md` | — | 1A | — | 3C | — | 5B |
 | `up.md` | — | 1D | — | — | — | 5A |
 | `down.md` | — | 1A→1F | — | — | — | 5A |
@@ -639,13 +639,13 @@ After each wave, verify the changes before proceeding to the next.
 ### After Wave 3
 
 - [ ] `refresh-wiki.md`: `git pull --ff-only` in Phase 0, then `bash .scripts/list-source-changes.sh` (no inline `git log`/`git diff --name-only`).
-- [ ] `resolve-issues.md`: `fetch-docs-issues.sh` for fetching → agents fix → `wiki-save.sh` for push → `close-issue.sh` for each issue. Confirm issues are NOT closed before push succeeds.
+- [ ] `revise-wiki.md`: `fetch-docs-issues.sh` for fetching → agents fix → `wiki-save.sh` for push → `close-issue.sh` for each issue. Confirm issues are NOT closed before push succeeds.
 - [ ] `save.md`: `check-wiki-safety.sh` for status → LLM generates commit message → `pull --rebase` → `wiki-save.sh`. No inline `git status --porcelain` or `git log @{u}..HEAD`.
 - [ ] All three commands reference `operations/git-workflow.md`.
 
 ### After Wave 4
 
-- [ ] `resolve-issues.md`: fixer agents reference `editorial/` guidance, not `CLAUDE.md`. `{tone}` is used, not hardcoded.
+- [ ] `revise-wiki.md`: fixer agents reference `editorial/` guidance, not `CLAUDE.md`. `{tone}` is used, not hardcoded.
 - [ ] `refresh-wiki.md`: source-to-wiki mapping reads `_Sidebar.md` and scans page content. Explorer output validated against `drift-assessment.md` protocol.
 - [ ] `proofread-wiki.md`: `.proofread/` cleared at start, issue cap exists, `_Sidebar.md` existence check present.
 - [ ] `init-wiki.md`: no inline writing principles remain.

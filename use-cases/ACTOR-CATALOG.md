@@ -65,7 +65,7 @@ Named for the *managing editor* — the person who runs the editorial quality pr
 #### Fulfillment orchestrator
 
 - **Drive:** Fulfillment.
-- **Appears in:** UC-03 (`/resolve-issues`)
+- **Appears in:** UC-03 (`/revise-wiki`)
 
 Named for the *production editor* — the person who manages the flow of corrections through the production pipeline, ensuring that marked-up proofs are corrected and ready for publication. The fulfillment orchestrator fetches GitHub issues, parses them against the published schema, filters out unapplicable issues, groups actionable issues by wiki page, dispatches correctors, and manages issue lifecycle (closing, commenting, labeling).
 

@@ -98,7 +98,7 @@ This logic is documented in CLAUDE.md under the Workspace section so all command
 ### 8. `.claude/commands/proofread-wiki.md`
 - Phase 0: replace `Read workspace.config.yml` with workspace selection logic reference
 
-### 9. `.claude/commands/resolve-issues.md`
+### 9. `.claude/commands/revise-wiki.md`
 - Phase 0: replace `Read workspace.config.yml` with workspace selection logic reference
 
 ### 10. `.claude/commands/save.md`
@@ -133,6 +133,6 @@ After implementation, verify:
 3. Run `/save` with multiple workspaces — should prompt for selection
 4. Run `/down reponame` — should remove only that workspace
 5. Run `/down --all` — should remove everything
-6. Run `/init-wiki`, `/refresh-wiki`, `/proofread-wiki`, `/resolve-issues` — should work with workspace selection
+6. Run `/init-wiki`, `/refresh-wiki`, `/proofread-wiki`, `/revise-wiki` — should work with workspace selection
 7. Confirm `.proofread/{repo}/` cache still works correctly across multiple workspaces
 8. Confirm `file-issue.sh` correctly resolves config when passed as argument

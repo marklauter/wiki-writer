@@ -98,7 +98,7 @@ This is the entry point for someone new to the model. It answers: who is this fo
 
 Each bounded context gets its own file defining its purpose, ubiquitous language, use cases, domain events produced and consumed, and integration points with other contexts.
 
-A bounded context is not a module or a folder — it is a region of the domain with its own language and its own rules. The same word can mean different things in different contexts. A "correction" in Issue Resolution is an applied fix from a GitHub issue. A "correction" in Drift Detection is an applied fix from a fact-checker assessment. The correction assignment protocol is structurally compatible, but the contexts are separate.
+A bounded context is not a module or a folder — it is a region of the domain with its own language and its own rules. The same word can mean different things in different contexts. A "correction" in Wiki Revision is an applied fix from a GitHub issue. A "correction" in Drift Detection is an applied fix from a fact-checker assessment. The correction assignment protocol is structurally compatible, but the contexts are separate.
 
 **Emerges:** Late. Bounded contexts become visible after several use cases reveal natural clustering. You may name them informally during early use cases ("this lives in the editorial review area") and formalize them later.
 

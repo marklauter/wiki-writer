@@ -1,8 +1,8 @@
-# DC-03 -- Issue Resolution
+# DC-03 -- Wiki Revision
 
 ## Purpose
 
-Owns the remediation of documented problems tracked in GitHub Issues. Correctors apply recommended corrections to wiki pages. Issue closure is a consequence of successful remediation, not the goal. This context consumes the published protocol from [DC-02 Editorial Review](DC-02-editorial-review.md).
+Owns the revision of wiki content based on documented problems tracked in GitHub Issues. Correctors apply recommended corrections to wiki pages. Issue closure is a consequence of successful revision, not the goal. This context consumes the published protocol from [DC-02 Editorial Review](DC-02-editorial-review.md).
 
 ## Ubiquitous language
 
@@ -13,7 +13,7 @@ Owns the remediation of documented problems tracked in GitHub Issues. Correctors
 
 ## Use cases
 
-- [UC-03](../UC-03-resolve-documentation-issues.md) -- Apply recommended corrections from GitHub issues to wiki pages
+- [UC-03](../UC-03-revise-wiki.md) -- Apply recommended corrections from GitHub issues to wiki pages
 
 ## Domain events produced
 

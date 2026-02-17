@@ -94,6 +94,14 @@ But agents within a use case need to exchange information. This happens through 
 
 The distinction matters: process events are prompt context passed through the orchestrator. Domain events are artifacts written to disk or external systems. Never pass raw subagent output between agents — transform it into a structured event first. The template is the form. The filled-in content is the memo.
 
+## Forms are the single source of truth for artifact structure
+
+Every structured artifact the system produces — config files, reports, issue bodies, domain events — has a canonical form in `.claude/forms/`. The form defines the shape. Scripts and agents consume the form as a template, substituting placeholders with real values. They never hardcode the structure.
+
+This means adding a field to a config file is a one-line change to the form, not a hunt through every script that writes configs. It means an issue body filed by UC-02 and a fallback file written when GitHub is down share the same structure because they share the same form. It means a human can read the form and know exactly what the artifact looks like without tracing through code.
+
+If a script writes a structured file, it should `sed` a form. If an agent produces a structured report, its prompt should include the form as a template. The form is the schema. The output is an instance.
+
 ## Markdown is the wire format
 
 Domain events, reports, protocols, and assessments are all materialized as markdown. Not JSON. Not YAML. Not structured tool output. The consumers are humans and LLM agents, and markdown is the format both read natively.

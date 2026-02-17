@@ -80,17 +80,16 @@ if ! git clone "$WIKI_URL" "$PROJECT_DIR/$WIKI_DIR" 2>&1; then
   exit 4
 fi
 
-# --- write config (only after both clones succeed) ---
-cat > "$CONFIG_PATH" <<EOF
-repo: $SLUG
-sourceDir: $SOURCE_DIR
-wikiDir: $WIKI_DIR
-audience: $AUDIENCE
-tone: $TONE
-EOF
+# --- write config from form template (only after both clones succeed) ---
+sed -e "s|{owner}|$OWNER|g" \
+    -e "s|{repo}|$REPO_NAME|g" \
+    -e "s|{audience}|$AUDIENCE|" \
+    -e "s|{tone}|$TONE|" \
+    "$PROJECT_DIR/.claude/forms/workspace.config.md" > "$CONFIG_PATH"
 
-# --- summary ---
-echo "Workspace provisioned for $SLUG"
-echo "  Source: $SOURCE_DIR"
-echo "  Wiki:   $WIKI_DIR"
-echo "  Config: $CONFIG_PATH"
+# --- summary from form template ---
+sed -e "s|{owner}|$OWNER|g" \
+    -e "s|{repo}|$REPO_NAME|g" \
+    -e "s|{audience}|$AUDIENCE|" \
+    -e "s|{tone}|$TONE|" \
+    "$PROJECT_DIR/.claude/forms/provision-summary.md"

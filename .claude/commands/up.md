@@ -96,16 +96,7 @@ If the script fails, it cleans up partial state. Report the error to the user an
 
 ### 9. Present the summary
 
-Show the user what was provisioned:
-
-- **Repository:** $OWNER/$REPO_NAME
-- **Source clone:** workspace/$OWNER/$REPO_NAME/
-- **Wiki clone:** workspace/$OWNER/$REPO_NAME.wiki/
-- **Config:** workspace/artifacts/$OWNER/$REPO_NAME/workspace.config.md
-- **Audience:** (selected value)
-- **Tone:** (selected value)
-
-Tell the user the workspace is ready and they can now run `/init-wiki` to populate the wiki.
+Show the user the script's output. The script produces a formatted summary from `.claude/forms/provision-summary.md`.
 
 ## What this command does NOT do
 

@@ -29,7 +29,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 - The wiki clone directory (`workspace/{owner}/{repo}.wiki/`) is removed.
 - The config file (`workspace/config/{owner}/{repo}/workspace.config.md`) is removed.
 - Empty parent directories under `workspace/config/` and `workspace/` are cleaned up.
-- The user sees confirmation of what was removed.
+- The user sees confirmation of what was removed: repo identity, directories deleted, config file deleted, and remaining workspace count. If other workspaces remain, lists them. If none remain, notes that `/up` can provision a new one.
 
 ## Failure outcome
 
@@ -44,7 +44,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 4. **System** -- Checks the wiki working tree for uncommitted changes and unpushed commits.
 5. **System** -- Removes all workspace artifacts.
    --> WorkspaceDecommissioned
-6. **User** -- Sees confirmation of what was removed.
+6. **User** -- Sees confirmation of what was removed: repo identity, directories deleted, config file deleted, and remaining workspace count. If other workspaces remain, lists them. If none remain, notes that `/up` can provision a new one.
 
 ## Goal obstacles
 

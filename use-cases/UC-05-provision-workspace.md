@@ -27,7 +27,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 - Source repository is cloned into `workspace/{owner}/{repo}/` as a readonly reference.
 - Wiki repository is cloned into `workspace/{owner}/{repo}.wiki/`.
 - `workspace/config/{owner}/{repo}/workspace.config.md` is written with repo identity, paths, audience, and tone.
-- The user sees a summary of what was provisioned: repo identity, paths, and config values.
+- The user sees a summary of what was provisioned: repo identity, clone paths, config values (audience, tone), and suggested next steps (run `/init-wiki` to populate the wiki).
 
 ## Failure outcome
 
@@ -47,7 +47,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 8. **System** -- Clones the wiki repository into the workspace.
 9. **System** -- Writes the workspace configuration file.
    --> WorkspaceProvisioned
-10. **User** -- Sees a summary of the provisioned workspace: repo identity, paths, and config values.
+10. **User** -- Sees a summary of the provisioned workspace: repo identity, clone paths, config values (audience, tone), and suggested next steps (run `/init-wiki` to populate the wiki).
 
 ## Goal obstacles
 

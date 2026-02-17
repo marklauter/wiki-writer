@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns the revision of wiki content based on documented problems tracked in GitHub Issues. Correctors apply recommended corrections to wiki pages. Issue closure is a consequence of successful revision, not the goal. This context consumes the published protocol from [DC-02 Editorial Review](DC-02-editorial-review.md).
+Owns the revision of wiki content based on documented problems tracked in GitHub Issues. Correctors apply recommended corrections to wiki pages. Issue closure is a consequence of successful remediation, not the goal. This context consumes the published protocol from [DC-02 Editorial Review](DC-02-editorial-review.md).
 
 ## Ubiquitous language
 

@@ -119,7 +119,7 @@ Note: `list-source-changes.sh` uses `git log` and `git diff HEAD~N..HEAD` which 
 The most repeated inline git command across the remediation plan is:
 
 ```bash
-git -C {dir} pull --ff-only    # refresh-wiki, resolve-issues
+git -C {dir} pull --ff-only    # refresh-wiki, revise-wiki
 git -C {dir} pull --rebase     # save
 ```
 
@@ -137,7 +137,7 @@ This would eliminate the last inline git operations and make `Bash(git -C *:*)` 
 The remediation plan has 5 waves editing the same command files:
 
 ```
-resolve-issues.md: Wave 1 → Wave 2 → Wave 3 → Wave 4 → Wave 5
+revise-wiki.md: Wave 1 → Wave 2 → Wave 3 → Wave 4 → Wave 5
 ```
 
 Wave 1 adds script calls. Wave 2 restructures around agents. Wave 3 adds more script calls. Each wave assumes prior work is preserved, but there's no explicit instruction saying "preserve the `resolve-workspace.sh` call from Task 1A when restructuring in Task 2D."

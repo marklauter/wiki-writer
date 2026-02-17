@@ -8,13 +8,18 @@
 # Hook output:
 #   exit 0 — allow (no output needed)
 #   exit 2 — block (reason on stdout as JSON)
+#
+# Fail-open: if anything goes wrong (bad input, parse failure), allow the
+# operation. The hook should only block when it is certain the target is a
+# source repo clone.
 
-set -euo pipefail
+# Fail-open on any unexpected error
+trap 'exit 0' ERR
 
-INPUT="$(cat)"
+INPUT="$(cat)" || exit 0
 
 # Extract file_path from JSON input (no jq dependency)
-FILE_PATH=$(echo "$INPUT" | sed -n 's/.*"file_path" *: *"\([^"]*\)".*/\1/p')
+FILE_PATH=$(echo "$INPUT" | sed -n 's/.*"file_path" *: *"\([^"]*\)".*/\1/p') || true
 
 # If no file_path found, allow (not a file operation we care about)
 if [[ -z "$FILE_PATH" ]]; then

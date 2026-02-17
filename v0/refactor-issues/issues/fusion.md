@@ -27,7 +27,7 @@ Every command that delegates file mutations to subagents is broken at runtime.
 | `init-wiki` | Phase 3 writer agents use `Write` to create pages | CR#4, SR init-wiki#2 |
 | `proofread-wiki` | Phase 3/4 agents write to `.proofread/` via Bash | CR#3, SR proofread-wiki#1,#2 |
 | `refresh-wiki` | Phase 3 update agents use `Edit` on wiki pages | CR#4, SR refresh-wiki#1 |
-| `resolve-issues` | Phase 2 fixer agents use `Edit`; Phase 3 closer agents use `Bash` for `gh` | CR#4, SR resolve-issues#1,#2,#3 |
+| `revise-wiki` | Phase 2 fixer agents use `Edit`; Phase 3 closer agents use `Bash` for `gh` | CR#4, SR revise-wiki#1,#2,#3 |
 
 **Fix:** Restructure all swarm commands so subagents only analyze and return results. The orchestrator applies all mutations itself.
 
@@ -37,11 +37,11 @@ Phase 3 launches `subagent_type: Explore` agents and instructs them to write fil
 
 **Sources:** CR#3, SR proofread-wiki#1
 
-### 1.3 `resolve-issues` Phase 3 `subagent_type: Bash` agents also denied
+### 1.3 `revise-wiki` Phase 3 `subagent_type: Bash` agents also denied
 
 Close/comment operations use Bash agents to run `gh issue close` and `gh issue comment` — denied by the permission model.
 
-**Sources:** SR resolve-issues#3
+**Sources:** SR revise-wiki#3
 
 ---
 
@@ -53,7 +53,7 @@ Close/comment operations use Bash agents to run `gh issue close` and `gh issue c
 
 CLAUDE.md puts the "no configs exist → stop" check at step 2 (early exit). Every command except `/up` and `/down` moves it to step 5 — after argument matching, auto-select, and prompt, all of which operate on an empty list.
 
-**Affected:** init-wiki, proofread-wiki, refresh-wiki, resolve-issues, save
+**Affected:** init-wiki, proofread-wiki, refresh-wiki, revise-wiki, save
 **Sources:** SR cross-cutting#2, SR init-wiki#3, SR refresh-wiki#5, SR save#4, SR down#6
 
 **Fix:** Replace inline workspace selection steps with a single reference: "Follow the Workspace selection procedure in CLAUDE.md." This eliminates all divergence.
@@ -77,10 +77,10 @@ No command pulls the latest source or wiki changes before operating.
 | Command | Consequence |
 |---------|------------|
 | `refresh-wiki` | Analyzes stale source code |
-| `resolve-issues` | Edits stale wiki pages |
+| `revise-wiki` | Edits stale wiki pages |
 | `save` | Pushes without pull/rebase, fails on diverged remotes |
 
-**Sources:** SR cross-cutting#3, SR refresh-wiki#2, SR resolve-issues#4, SR save#3
+**Sources:** SR cross-cutting#3, SR refresh-wiki#2, SR revise-wiki#4, SR save#3
 
 ### 3.2 `/save` misses unpushed commits
 
@@ -100,11 +100,11 @@ If `pull --rebase` is added to `/save`, there is no guidance for merge conflicts
 
 **Sources:** SR save#5
 
-### 3.5 `resolve-issues` closes issues before edits are pushed
+### 3.5 `revise-wiki` closes issues before edits are pushed
 
 Issues are marked closed on GitHub while the wiki edits remain local. If `/save` is never run (or fails), GitHub shows issues as resolved but the wiki is unchanged.
 
-**Sources:** SR resolve-issues#6
+**Sources:** SR revise-wiki#6
 
 ---
 
@@ -278,16 +278,16 @@ Sidebar structural issues filed in Phase 1 skip the Phase 5 deduplication check.
 | `init-wiki` | Phase 3 writer agents |
 | `proofread-wiki` | Phase 3 explorers, Phase 5 dedup |
 | `refresh-wiki` | Phase 2 explorers, Phase 3 update agents |
-| `resolve-issues` | Phase 2 fixers, Phase 3 closers |
+| `revise-wiki` | Phase 2 fixers, Phase 3 closers |
 
-**Sources:** SR init-wiki#9, SR proofread-wiki#5,#14, SR refresh-wiki#12, SR resolve-issues#12,#13
+**Sources:** SR init-wiki#9, SR proofread-wiki#5,#14, SR refresh-wiki#12, SR revise-wiki#12,#13
 
 ### 7.2 No handling for zero-result scenarios
 
-- `resolve-issues`: No handling for zero open issues — should exit early.
+- `revise-wiki`: No handling for zero open issues — should exit early.
 - `refresh-wiki`: Missing `_Sidebar.md` → discovers zero pages, reports false "up to date."
 
-**Sources:** SR resolve-issues#7, SR refresh-wiki#7
+**Sources:** SR revise-wiki#7, SR refresh-wiki#7
 
 ### 7.3 No validation of subagent output format
 
@@ -301,29 +301,29 @@ Explorer/analyzer agents can return malformed results. No schema validation befo
 
 **Severity: MEDIUM**
 
-### 8.1 `resolve-issues` points agents to wrong guidance source
+### 8.1 `revise-wiki` points agents to wrong guidance source
 
 Tells fixer agents to "read `CLAUDE.md` for writing principles." CLAUDE.md contains workspace layout — the actual writing principles are in `.claude/guidance/editorial-guidance.md` and `.claude/guidance/wiki-instructions.md`.
 
-**Sources:** CR#9, SR resolve-issues#10
+**Sources:** CR#9, SR revise-wiki#10
 
-### 8.2 `resolve-issues` overrides user's configured tone
+### 8.2 `revise-wiki` overrides user's configured tone
 
 Hardcoded "reference-style not tutorial" tone overrides the user's `tone` field from workspace config.
 
-**Sources:** SR resolve-issues#5
+**Sources:** SR revise-wiki#5
 
-### 8.3 `resolve-issues` description says `docs` label, system uses `documentation`
+### 8.3 `revise-wiki` description says `docs` label, system uses `documentation`
 
 Line 8 says "open `docs`-labeled GitHub issues" but everywhere else uses `documentation`. The actual `gh` command on line 35 is correct.
 
 **Sources:** CR#8
 
-### 8.4 `resolve-issues` leftover rename artifact
+### 8.4 `revise-wiki` leftover rename artifact
 
-"fix-docs" name appears in Constraints section — should be "resolve-issues."
+"fix-docs" name appears in Constraints section — should be "revise-wiki."
 
-**Sources:** SR resolve-issues#18
+**Sources:** SR revise-wiki#18
 
 ### 8.5 `init-wiki` duplicates writing principles inline
 
@@ -367,29 +367,29 @@ Explorers can't read deleted files but are told to analyze them.
 
 **Sources:** SR refresh-wiki#14
 
-### 9.5 `resolve-issues` — issues referencing deleted/renamed wiki pages
+### 9.5 `revise-wiki` — issues referencing deleted/renamed wiki pages
 
 No handling when an issue references a page that no longer exists.
 
-**Sources:** SR resolve-issues#8
+**Sources:** SR revise-wiki#8
 
-### 9.6 `resolve-issues` — issue body parsing format assumed but never specified
+### 9.6 `revise-wiki` — issue body parsing format assumed but never specified
 
 Fixer agents parse `### Label` blocks from issue bodies, but the format is an implicit assumption.
 
-**Sources:** SR resolve-issues#9
+**Sources:** SR revise-wiki#9
 
-### 9.7 `resolve-issues` — source file paths not prefixed with `{sourceDir}/`
+### 9.7 `revise-wiki` — source file paths not prefixed with `{sourceDir}/`
 
 Source file paths from issues may not resolve because they lack the workspace path prefix.
 
-**Sources:** SR resolve-issues#11
+**Sources:** SR revise-wiki#11
 
-### 9.8 `resolve-issues` — shell injection risk in `--body` argument
+### 9.8 `revise-wiki` — shell injection risk in `--body` argument
 
 Comment body constructed from issue-derived text passed to Bash without sanitization.
 
-**Sources:** SR resolve-issues#14
+**Sources:** SR revise-wiki#14
 
 ### 9.9 `init-wiki` — `TaskOutput` missing from `allowed-tools`
 
@@ -481,19 +481,19 @@ Source repos are read-only reference — full clone wastes time and disk.
 
 **Sources:** SR up#12
 
-### 10.3 No reminder to run `/save` after `resolve-issues` edits
+### 10.3 No reminder to run `/save` after `revise-wiki` edits
 
 User could forget to push the changes.
 
-**Sources:** SR resolve-issues#15
+**Sources:** SR revise-wiki#15
 
-### 10.4 `--limit 100` silently truncates large issue sets in `resolve-issues`
+### 10.4 `--limit 100` silently truncates large issue sets in `revise-wiki`
 
-**Sources:** SR resolve-issues#16
+**Sources:** SR revise-wiki#16
 
-### 10.5 No instruction to read `{sourceDir}/CLAUDE.md` for project conventions in `resolve-issues`
+### 10.5 No instruction to read `{sourceDir}/CLAUDE.md` for project conventions in `revise-wiki`
 
-**Sources:** SR resolve-issues#17
+**Sources:** SR revise-wiki#17
 
 ### 10.6 `refresh-wiki` — no signal when source changes imply a new wiki page is needed
 
@@ -532,14 +532,14 @@ No structural guard against accidental source repo mutation.
 | No credential/secret check before staging | SR save#14 |
 | "Nothing to save" error diverges from convention | SR save#7 |
 
-### 10.12 Various resolve-issues minor issues
+### 10.12 Various revise-wiki minor issues
 
 | Issue | Source |
 |-------|--------|
-| Ambiguous whether `-plan` combines with issue-number filters | SR resolve-issues#19 |
-| Haiku model for close/comment agents may struggle | SR resolve-issues#20 |
-| Source file reads not sandboxed to `{sourceDir}/` | SR resolve-issues#21 |
-| No dedup of effort across runs | SR resolve-issues#22 |
+| Ambiguous whether `-plan` combines with issue-number filters | SR revise-wiki#19 |
+| Haiku model for close/comment agents may struggle | SR revise-wiki#20 |
+| Source file reads not sandboxed to `{sourceDir}/` | SR revise-wiki#21 |
+| No dedup of effort across runs | SR revise-wiki#22 |
 
 ### 10.13 Various init-wiki minor issues
 
@@ -565,13 +565,13 @@ No structural guard against accidental source repo mutation.
 
 | # | Concept | Severity | Issue Count | Commands Affected |
 |---|---------|----------|-------------|-------------------|
-| 1 | Subagent permission model | CRITICAL | 3 | init-wiki, proofread-wiki, refresh-wiki, resolve-issues |
+| 1 | Subagent permission model | CRITICAL | 3 | init-wiki, proofread-wiki, refresh-wiki, revise-wiki |
 | 2 | Workspace selection | HIGH | 2 | all except /up |
-| 3 | Git workflow gaps | HIGH | 5 | refresh-wiki, resolve-issues, save |
+| 3 | Git workflow gaps | HIGH | 5 | refresh-wiki, revise-wiki, save |
 | 4 | `/up` ordering & atomicity | HIGH | 7+ | up |
 | 5 | `/down` safety & validation | HIGH | 6+ | down |
 | 6 | Issue filing pipeline | BUG/HIGH | 8 | proofread-wiki, file-issue.sh |
 | 7 | Error handling & retry | MEDIUM | 3 | all swarm commands |
-| 8 | Guidance & docs references | MEDIUM | 6 | resolve-issues, init-wiki |
+| 8 | Guidance & docs references | MEDIUM | 6 | revise-wiki, init-wiki |
 | 9 | Per-command edge cases | MEDIUM | 20 | various |
 | 10 | Housekeeping | LOW | 14+ | various |

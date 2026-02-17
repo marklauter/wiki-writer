@@ -46,7 +46,7 @@ Multiple commands assume Task subagents can Edit/Write files:
 
 - `init-wiki.md` Phase 3 — writer agents use Write
 - `refresh-wiki.md` Phase 3 — update agents use Edit
-- `resolve-issues.md` Phase 2 — fixer agents use Edit
+- `revise-wiki.md` Phase 2 — fixer agents use Edit
 
 Subagents do not inherit the user's permission mode. Even in "edit automatically" mode, subagents get denied Edit/Write. This means the core swarm pattern (parallel agents editing wiki files) fails at runtime unless the user manually approves each tool call.
 
@@ -81,15 +81,15 @@ Both would be tracked by git if they're ever created.
 
 ## Inconsistencies
 
-### 8. resolve-issues.md — says `docs`-labeled, system uses `documentation`
+### 8. revise-wiki.md — says `docs`-labeled, system uses `documentation`
 
-**File:** `.claude/commands/resolve-issues.md:8`
+**File:** `.claude/commands/revise-wiki.md:8`
 
 Line 8: "open `docs`-labeled GitHub issues." The actual label used everywhere is `documentation` (issue template, proofread-wiki's `gh issue list --label documentation`). The Phase 1 `gh` command on line 35 correctly uses `--label documentation`, so this is a description-only mismatch.
 
-### 9. resolve-issues.md — points agents to wrong guidance source
+### 9. revise-wiki.md — points agents to wrong guidance source
 
-**File:** `.claude/commands/resolve-issues.md:57,79`
+**File:** `.claude/commands/revise-wiki.md:57,79`
 
 Tells fixer agents to "read `CLAUDE.md` for writing principles." `CLAUDE.md` contains workspace layout and config format — not writing principles. The actual writing principles are in `.claude/guidance/editorial-guidance.md` and `.claude/guidance/wiki-instructions.md`, which other commands (init-wiki, refresh-wiki) correctly reference.
 
@@ -118,7 +118,7 @@ Step 2 says "After the interview step provides the `{owner}` and `{repo}` values
 | 5 | Design | file-issue.sh not in allowed permissions |
 | 6 | Design | No config path for multi-workspace issue filing |
 | 7 | Gitignore | .proofread/ and issues/ not ignored |
-| 8 | Inconsistency | Wrong label name in resolve-issues description |
-| 9 | Inconsistency | Wrong guidance reference in resolve-issues |
+| 8 | Inconsistency | Wrong label name in revise-wiki description |
+| 9 | Inconsistency | Wrong guidance reference in revise-wiki |
 | 10 | Inconsistency | Step ordering in up.md |
 | 11 | Robustness | HEAD~50 fails on repos with <50 commits |

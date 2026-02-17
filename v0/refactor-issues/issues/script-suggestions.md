@@ -6,14 +6,14 @@ Analysis of wiki-agent commands against the [Claude Code subagent documentation]
 
 ### How agents are used today
 
-Every command lives in `.claude/commands/` as a skill (Markdown with YAML frontmatter). Commands that need parallel work — `init-wiki`, `refresh-wiki`, `proofread-wiki`, `resolve-issues` — manually spawn agents via the **Task tool** with long inline prompts embedded in the command file itself.
+Every command lives in `.claude/commands/` as a skill (Markdown with YAML frontmatter). Commands that need parallel work — `init-wiki`, `refresh-wiki`, `proofread-wiki`, `revise-wiki` — manually spawn agents via the **Task tool** with long inline prompts embedded in the command file itself.
 
 | Command | Agent pattern | Agent types spawned |
 |---------|--------------|-------------------|
 | `init-wiki` | 5 background Explore agents (Phase 1), 1 general-purpose planner (Phase 2), N background general-purpose writers (Phase 3) | Explore, general-purpose |
 | `refresh-wiki` | N background Explore agents (Phase 2), N general-purpose updaters (Phase 3) | Explore, general-purpose |
 | `proofread-wiki` | 3 background Explore summarizers (Phase 3), N background Explore reviewers (Phase 4), 1 general-purpose deduplicator (Phase 5) | Explore, general-purpose |
-| `resolve-issues` | N background general-purpose fixers (Phase 2), N Bash closers (Phase 3) | general-purpose, Bash |
+| `revise-wiki` | N background general-purpose fixers (Phase 2), N Bash closers (Phase 3) | general-purpose, Bash |
 
 ### What's missing
 
@@ -22,7 +22,7 @@ Every command lives in `.claude/commands/` as a skill (Markdown with YAML frontm
 3. **No persistent memory.** Agents start fresh every time. Knowledge about the target codebase, editorial patterns, or recurring issues is lost between sessions.
 4. **No hooks.** The source-repo-readonly policy is enforced only by prose instructions in prompts, not structurally.
 5. **No skill preloading.** Every agent prompt says "read `.claude/guidance/editorial-guidance.md` and `.claude/guidance/wiki-instructions.md` before writing." This wastes agent turns on file reads that could be injected at startup.
-6. **Massive prompt duplication.** The workspace selection procedure is copy-pasted verbatim into 6 of 7 commands. Editorial standards are inlined as a ~50-line section in `proofread-wiki.md`. Writing principles are repeated across `init-wiki`, `refresh-wiki`, and `resolve-issues`.
+6. **Massive prompt duplication.** The workspace selection procedure is copy-pasted verbatim into 6 of 7 commands. Editorial standards are inlined as a ~50-line section in `proofread-wiki.md`. Writing principles are repeated across `init-wiki`, `refresh-wiki`, and `revise-wiki`.
 
 ---
 
@@ -98,7 +98,7 @@ memory: project
 
 #### `wiki-fixer.md`
 
-Replaces the general-purpose fixer agents in `resolve-issues` (Phase 2).
+Replaces the general-purpose fixer agents in `revise-wiki` (Phase 2).
 
 ```yaml
 ---
@@ -240,7 +240,7 @@ None of the current agent invocations specify a turn limit. If an agent gets stu
 
 ### 7. Reduce prompt duplication in commands
 
-The workspace selection procedure (steps 1-6) is copy-pasted into `init-wiki.md`, `refresh-wiki.md`, `proofread-wiki.md`, `resolve-issues.md`, and `save.md`. It's also described in `CLAUDE.md`.
+The workspace selection procedure (steps 1-6) is copy-pasted into `init-wiki.md`, `refresh-wiki.md`, `proofread-wiki.md`, `revise-wiki.md`, and `save.md`. It's also described in `CLAUDE.md`.
 
 **Options:**
 
@@ -273,7 +273,7 @@ Apply this to command definitions to make the delegation pattern explicit:
 - `init-wiki`: `Task(wiki-explorer, doc-planner, wiki-writer)`
 - `refresh-wiki`: `Task(wiki-explorer, wiki-writer)`
 - `proofread-wiki`: `Task(wiki-explorer, wiki-reviewer, doc-planner)`
-- `resolve-issues`: `Task(wiki-fixer)`
+- `revise-wiki`: `Task(wiki-fixer)`
 
 This prevents commands from accidentally spawning the wrong agent type. Note: this feature applies to agents run via `claude --agent`, not skills. If commands remain as skills (not subagents), this doesn't apply directly — but it's worth considering if the orchestration layer ever moves to a subagent architecture.
 

@@ -4,7 +4,7 @@ Critical review of all 7 slash commands performed by parallel Opus explorer agen
 Each agent read the command file, CLAUDE.md, guidance files, and cross-command dependencies.
 
 **Date:** 2025-02-15
-**Scope:** `.claude/commands/` — up, down, init-wiki, proofread-wiki, refresh-wiki, resolve-issues, save
+**Scope:** `.claude/commands/` — up, down, init-wiki, proofread-wiki, refresh-wiki, revise-wiki, save
 
 ---
 
@@ -19,7 +19,7 @@ The single most important finding. `MEMORY.md` documents that Task subagents are
 | `init-wiki` | Phase 3 writer agents use `Write` to create pages — denied |
 | `proofread-wiki` | Phase 3/4 agents write to `.proofread/` via `Bash` — denied |
 | `refresh-wiki` | Phase 3 update agents use `Edit` on wiki pages — denied |
-| `resolve-issues` | Phase 2 fixer agents use `Edit`; Phase 3 closer agents use `Bash` for `gh` — denied |
+| `revise-wiki` | Phase 2 fixer agents use `Edit`; Phase 3 closer agents use `Bash` for `gh` — denied |
 
 **Fix pattern:** Restructure so subagents only analyze and return results. The orchestrator applies all mutations (edits, writes, bash commands) itself.
 
@@ -27,7 +27,7 @@ The single most important finding. `MEMORY.md` documents that Task subagents are
 
 CLAUDE.md puts the "no configs exist -> stop" check at step 2 (early exit). Every command except `/up` and `/down` moves it to step 5 (after argument matching, auto-select, and prompt — all of which operate on an empty list).
 
-**Affected:** init-wiki, proofread-wiki, refresh-wiki, resolve-issues, save.
+**Affected:** init-wiki, proofread-wiki, refresh-wiki, revise-wiki, save.
 
 **Fix:** Either faithfully reproduce CLAUDE.md's step order (no-configs check at step 2), or replace inline steps with a reference: "Follow the Workspace selection procedure in CLAUDE.md."
 
@@ -36,7 +36,7 @@ CLAUDE.md puts the "no configs exist -> stop" check at step 2 (early exit). Ever
 No command pulls the latest source or wiki changes before operating:
 
 - `/refresh-wiki` analyzes stale source code
-- `/resolve-issues` edits stale wiki pages
+- `/revise-wiki` edits stale wiki pages
 - `/save` pushes without pull/rebase, failing on diverged remotes
 
 ### MEDIUM: `TaskOutput` missing from some `allowed-tools` lists
@@ -159,7 +159,7 @@ No command pulls the latest source or wiki changes before operating:
 | 21 | LOW | Phase 3 re-reads source files, undermining explorer's "Correct content" field |
 | 22 | LOW | No incremental refresh tracking — re-examines same commits on next run |
 
-### `/resolve-issues` — 2 CRITICAL, 4 HIGH, 7 MEDIUM, 8 LOW
+### `/revise-wiki` — 2 CRITICAL, 4 HIGH, 7 MEDIUM, 8 LOW
 
 | # | Severity | Finding |
 |---|----------|---------|
@@ -180,7 +180,7 @@ No command pulls the latest source or wiki changes before operating:
 | 15 | LOW | No reminder to run `/save` after edits are applied |
 | 16 | LOW | `--limit 100` silently truncates large issue sets |
 | 17 | LOW | No instruction to read `{sourceDir}/CLAUDE.md` for project conventions |
-| 18 | LOW | "fix-docs" name in Constraints should be "resolve-issues" (leftover from rename) |
+| 18 | LOW | "fix-docs" name in Constraints should be "revise-wiki" (leftover from rename) |
 | 19 | LOW | Ambiguous whether `-plan` can combine with issue-number filters |
 | 20 | LOW | Haiku model for close/comment agents may struggle with complex skip reasons |
 | 21 | LOW | Source file reads not sandboxed to `{sourceDir}/` — could read outside source tree |
@@ -222,11 +222,11 @@ No command pulls the latest source or wiki changes before operating:
 
 ### 1. Restructure subagent architecture across all swarm commands
 
-Use subagents for read-only analysis only. The orchestrator applies all mutations (edits, writes, bash commands) itself. This resolves all 7 CRITICAL findings and several HIGH findings across `init-wiki`, `proofread-wiki`, `refresh-wiki`, and `resolve-issues`.
+Use subagents for read-only analysis only. The orchestrator applies all mutations (edits, writes, bash commands) itself. This resolves all 7 CRITICAL findings and several HIGH findings across `init-wiki`, `proofread-wiki`, `refresh-wiki`, and `revise-wiki`.
 
 ### 2. Add `git pull` steps
 
-Pull source repo before analysis (`refresh-wiki`). Pull wiki repo before editing (`resolve-issues`, `refresh-wiki`). Pull with rebase before push (`save`). Add merge conflict handling.
+Pull source repo before analysis (`refresh-wiki`). Pull wiki repo before editing (`revise-wiki`, `refresh-wiki`). Pull with rebase before push (`save`). Add merge conflict handling.
 
 ### 3. Fix workspace selection ordering
 

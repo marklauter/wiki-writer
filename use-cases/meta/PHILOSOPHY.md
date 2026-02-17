@@ -64,7 +64,7 @@ The actor's job is to satisfy intent. The use case's job is to express it clearl
 
 ## Bounded contexts over shared models
 
-Each use case lives in a bounded context with its own language and its own rules. Proofread and resolve share a published language (the issue body protocol) but operate independently. They do not share internal state.
+Each use case lives in a bounded context with its own language and its own rules. Proofread and revise share a published language (the issue body protocol) but operate independently. They do not share internal state.
 
 Respect boundaries. Define protocols at every crossing point.
 

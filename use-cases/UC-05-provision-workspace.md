@@ -2,7 +2,7 @@
 
 ## Goal
 
-A new project workspace exists and is ready for wiki operations. The user can immediately run any downstream command (`/init-wiki`, `/proofread-wiki`, `/refresh-wiki`, `/save`) and have it resolve the workspace without error.
+A new project workspace exists and is ready for wiki operations. The user can immediately run any downstream command (`/init-wiki`, `/proofread-wiki`, `/revise-wiki`, `/refresh-wiki`) and have it resolve the workspace without error.
 
 ## Context
 

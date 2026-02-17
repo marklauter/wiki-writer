@@ -2,9 +2,9 @@
 
 # wiki-agent
 
-Claude Code angetic toolset for GitHub wiki management. Works with any GitHub project.
+Claude Code agentic toolset for GitHub wiki management. Works with any GitHub project.
 
-GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-agent automates wiki creation, editorial review, drift detection, and issue tracking so documentation stays current.
+GitHub wikis have no CI, no review workflow, and drift from source code over time. wiki-agent automates wiki creation, editorial review, drift detection, and wiki revision so documentation stays current.
 
 ## How it works
 

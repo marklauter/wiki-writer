@@ -35,7 +35,7 @@ Supporting documents: [PHILOSOPHY.md](meta/PHILOSOPHY.md) (design principles), [
 - **[UC-02](UC-02-review-wiki-quality.md)** -- Review wiki quality across four editorial lenses, file GitHub issues
 - **[UC-03](UC-03-resolve-documentation-issues.md)** -- Apply recommended corrections from GitHub issues to wiki pages
 - **[UC-04](UC-04-sync-wiki-with-source-changes.md)** -- Fact-check wiki claims against source code and external references, correct drift
-- **[UC-05](UC-05-provision-workspace.md)** -- Clone repos and write config for a new project workspace
+- **[UC-05](UC-05-provision-workspace.md)** -- Clone repos and write config for a new project workspace *(complete)*
 - **[UC-06](UC-06-decommission-workspace.md)** -- Remove a project workspace with safety checks for unpublished work
 - **[UC-07](UC-07-publish-wiki-changes.md)** -- Commit and push wiki changes *(out of scope -- users use their own git tools)*
 - **[UC-08](UC-08-refactor-existing-wiki.md)** -- Interactively restructure an existing wiki *(not yet designed)*

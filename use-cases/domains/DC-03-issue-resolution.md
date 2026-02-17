@@ -26,5 +26,5 @@ Owns the remediation of documented problems tracked in GitHub Issues. Correctors
 ## Integration points
 
 - **Requires:** [DC-05 Workspace Lifecycle](DC-05-workspace-lifecycle.md) -- workspace must be provisioned.
-- **Consumes from:** [DC-02 Editorial Review](DC-02-editorial-review.md) -- GitHub issues conforming to `wiki-docs.yml` schema.
+- **Consumes from:** [DC-02 Editorial Review](DC-02-editorial-review.md) -- GitHub issues conforming to `documentation-issue.md` schema.
 - **Shares with:** [DC-04 Drift Detection](DC-04-drift-detection.md) -- corrector protocol is structurally compatible.

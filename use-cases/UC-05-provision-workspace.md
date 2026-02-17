@@ -26,7 +26,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 
 - Source repository is cloned into `workspace/{owner}/{repo}/` as a readonly reference.
 - Wiki repository is cloned into `workspace/{owner}/{repo}.wiki/`.
-- `workspace/config/{owner}/{repo}/workspace.config.yml` is written with repo identity, paths, audience, and tone.
+- `workspace/config/{owner}/{repo}/workspace.config.md` is written with repo identity, paths, audience, and tone.
 - The user sees a summary of what was provisioned: repo identity, paths, and config values.
 
 ## Failure outcome
@@ -94,7 +94,7 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions.
 
 ## Protocols
 
-- **workspace.config.yml** -- step 9, the output artifact of provisioning. This file is the contract between Workspace Lifecycle and all other bounded contexts. Its schema (repo, sourceDir, wikiDir, audience, tone) is consumed by the workspace selection procedure that every downstream command executes before operating.
+- **workspace.config.md** -- step 9, the output artifact of provisioning. This file is the contract between Workspace Lifecycle and all other bounded contexts. Its schema (repo, sourceDir, wikiDir, audience, tone) is consumed by the workspace selection procedure that every downstream command executes before operating.
 
 ## Notes
 

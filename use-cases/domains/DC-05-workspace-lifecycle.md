@@ -6,7 +6,7 @@ Owns the provisioning and decommissioning of project workspaces. A workspace is 
 
 ## Ubiquitous language
 
-- **Workspace config** -- A `workspace.config.yml` file containing repo identity, source dir, wiki dir, audience, and tone. The contract between Workspace Lifecycle and all other bounded contexts.
+- **Workspace config** -- A `workspace.config.md` file containing repo identity, source dir, wiki dir, audience, and tone. The contract between Workspace Lifecycle and all other bounded contexts.
 - **Source clone** -- A readonly clone of the source repository, used as reference material.
 - **Wiki clone** -- A clone of the wiki repository, the mutable working copy for all editorial operations.
 - **Safety check** -- Inspection of the wiki working tree for uncommitted changes and unpushed commits before decommissioning.

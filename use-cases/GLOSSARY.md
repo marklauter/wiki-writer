@@ -78,7 +78,7 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Protocol** -- An actor boundary contract defining the input, output, and ownership at every crossing point between actors or between an actor and a sub-system.
 
-**Published language** -- The integration contract between bounded contexts; in this system, the GitHub issue body conforming to `wiki-docs.yml` is the published language between DC-02 (Editorial Review) and DC-03 (Issue Resolution).
+**Published language** -- The integration contract between bounded contexts; in this system, the GitHub issue body conforming to `documentation-issue.md` is the published language between DC-02 (Editorial Review) and DC-03 (Issue Resolution).
 
 **Remediation** -- The drive of applying known fixes to known problems; distinguished from resolution (closing tickets) and from creation (producing new content).
 
@@ -118,9 +118,9 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Wiki plan** -- A hierarchical structure of sections containing pages, each with filename, title, description, and key source files; proposed by the developmental editor, refined and approved by the user before writing begins (UC-01).
 
-**Workspace** -- The configuration, source clone, and wiki clone for one GitHub project; defined by the existence of a `workspace.config.yml` file.
+**Workspace** -- The configuration, source clone, and wiki clone for one GitHub project; defined by the existence of a `workspace.config.md` file.
 
-**Workspace config** -- The `workspace.config.yml` file containing repo identity, source dir, wiki dir, audience, and tone; the contract between Workspace Lifecycle and all other bounded contexts.
+**Workspace config** -- The `workspace.config.md` file containing repo identity, source dir, wiki dir, audience, and tone; the contract between Workspace Lifecycle and all other bounded contexts.
 
 **Workspace selection** -- The shared protocol every use case (except UC-05) executes to resolve which workspace to operate on; implemented by `resolve-workspace.sh`.
 

@@ -23,7 +23,7 @@ The domain decomposes into six **bounded contexts**, each with its own ubiquitou
 - **[DC-05 Workspace Lifecycle](domains/DC-05-workspace-lifecycle.md)** -- provisioning and decommissioning of project workspaces.
 - **[DC-06 Wiki Restructuring](domains/DC-06-wiki-restructuring.md)** -- interactive restructuring of an existing wiki *(not yet designed)*.
 
-The **published language** between Editorial Review and Issue Resolution is the GitHub issue body conforming to the `wiki-docs.yml` template schema. This is the integration contract -- UC-02 produces issues in this format, UC-03 consumes them. No internal state is shared across the boundary.
+The **published language** between Editorial Review and Issue Resolution is the GitHub issue body conforming to the `documentation-issue.md` template schema. This is the integration contract -- UC-02 produces issues in this format, UC-03 consumes them. No internal state is shared across the boundary.
 
 Actors have **drives** -- behavioral tendencies that determine what each actor optimizes for (see [PHILOSOPHY.md](meta/PHILOSOPHY.md)). A creator's drive is production. A proofreader's drive is critique. A fact-checker's drive is verification. Where a single drive is insufficient to protect a concern, a separate actor with a complementary drive is introduced. This is the domain's answer to conflicts of interest: structural separation, not trust.
 

@@ -36,7 +36,7 @@ fi
 
 SLUG="$OWNER/$REPO_NAME"
 CONFIG_DIR="$PROJECT_DIR/workspace/config/$OWNER/$REPO_NAME"
-CONFIG_PATH="$CONFIG_DIR/workspace.config.yml"
+CONFIG_PATH="$CONFIG_DIR/workspace.config.md"
 SOURCE_DIR="workspace/$OWNER/$REPO_NAME"
 WIKI_DIR="workspace/$OWNER/$REPO_NAME.wiki"
 
@@ -82,11 +82,11 @@ fi
 
 # --- write config (only after both clones succeed) ---
 cat > "$CONFIG_PATH" <<EOF
-repo: "$SLUG"
-sourceDir: "$SOURCE_DIR"
-wikiDir: "$WIKI_DIR"
-audience: "$AUDIENCE"
-tone: "$TONE"
+repo: $SLUG
+sourceDir: $SOURCE_DIR
+wikiDir: $WIKI_DIR
+audience: $AUDIENCE
+tone: $TONE
 EOF
 
 # --- summary ---

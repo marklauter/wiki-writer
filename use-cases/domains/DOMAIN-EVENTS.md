@@ -25,9 +25,9 @@ The wiki directory has been populated with a complete set of documentation pages
 - **Bounded context:** [DC-02 Editorial Review](DC-02-editorial-review.md)
 - **Producer:** [UC-02](../UC-02-review-wiki-quality.md)
 - **Consumer:** [DC-03 Issue Resolution](DC-03-issue-resolution.md) via [UC-03](../UC-03-resolve-documentation-issues.md)
-- **Materialization:** GitHub issue with `documentation` label, conforming to `wiki-docs.yml` schema
+- **Materialization:** GitHub issue with `documentation` label, conforming to `documentation-issue.md` schema
 
-A GitHub issue has been created for a documentation problem. This is the only published event that crosses a bounded context boundary as a formal contract. The issue body schema (`wiki-docs.yml`) is the integration protocol between Editorial Review and Issue Resolution. GitHub is a sub-system -- the issue is the durable fact.
+A GitHub issue has been created for a documentation problem. This is the only published event that crosses a bounded context boundary as a formal contract. The issue body schema (`documentation-issue.md`) is the integration protocol between Editorial Review and Issue Resolution. GitHub is a sub-system -- the issue is the durable fact.
 
 ### Payload
 
@@ -95,9 +95,9 @@ The sync operation has completed. Every factual claim has been checked, drift ha
 - **Bounded context:** [DC-05 Workspace Lifecycle](DC-05-workspace-lifecycle.md)
 - **Producer:** [UC-05](../UC-05-provision-workspace.md)
 - **Consumer:** All operational bounded contexts (DC-01 through DC-04) via config file discovery
-- **Materialization:** `workspace/config/{owner}/{repo}/workspace.config.yml` on disk
+- **Materialization:** `workspace/config/{owner}/{repo}/workspace.config.md` on disk
 
-A new workspace configuration file has been written to disk. This is the durable fact that all other bounded contexts discover at workspace selection time by scanning for config files matching `workspace/config/*/*/workspace.config.yml`.
+A new workspace configuration file has been written to disk. This is the durable fact that all other bounded contexts discover at workspace selection time by scanning for config files matching `workspace/config/*/*/workspace.config.md`.
 
 ### Payload
 

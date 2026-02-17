@@ -22,7 +22,7 @@ configs=()
 while IFS= read -r -d '' f; do
   configs+=("$f")
 done < <(find "$PROJECT_DIR/workspace/config" -mindepth 3 -maxdepth 3 \
-  -name "workspace.config.yml" -print0 2>/dev/null || true)
+  -name "workspace.config.md" -print0 2>/dev/null || true)
 
 if [[ ${#configs[@]} -eq 0 ]]; then
   echo "error: no workspace config found. Run /up first." >&2
@@ -68,9 +68,9 @@ else
   exit 2
 fi
 
-# --- parse config ---
+# --- parse config (key: value format) ---
 parse_field() {
-  grep "^$1:" "$selected" | sed "s/^$1:[[:space:]]*//" | tr -d '"'
+  grep "^$1:" "$selected" | sed "s/^$1:[[:space:]]*//"
 }
 
 REPO="$(parse_field repo)"

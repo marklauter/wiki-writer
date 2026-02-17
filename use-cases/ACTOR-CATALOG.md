@@ -175,7 +175,7 @@ Infrastructure components that the system depends on. These are not actors — t
 - **Role:** Remote repository host and durable event store.
 - **Used by:** UC-02 (issue filing, deduplication), UC-03 (issue reading, closing, labeling), UC-05 (repository validation)
 
-GitHub Issues serves as the message queue between UC-02 (producer) and UC-03 (consumer). The issue body conforming to `wiki-docs.yml` is the published protocol. GitHub is a sub-system, not an external dependency — issues are the durable facts that cross bounded context boundaries.
+GitHub Issues serves as the message queue between UC-02 (producer) and UC-03 (consumer). The issue body conforming to `documentation-issue.md` is the published protocol. GitHub is a sub-system, not an external dependency — issues are the durable facts that cross bounded context boundaries.
 
 ### Git
 

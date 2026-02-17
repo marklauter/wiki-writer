@@ -29,7 +29,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 - **Only close what you fixed.** An issue is closed only when the recommended correction has been applied to the wiki file and the edit tool reported success. An issue closed without the fix applied is a violation. This is the structural guarantee that issue closure tracks actual remediation.
 - **Source code is readonly.** Correctors read source code to verify accuracy recommendations but never modify it. If an accuracy recommendation contradicts the source code, the corrector skips the issue -- it does not "fix" the source.
 - **Targeted edits, not rewrites.** Correctors use the Edit tool for surgical changes. Entire pages are not rewritten unless a structural issue specifically requires it. The existing page structure, voice, and content beyond the finding are preserved.
-- **Unstructured issues are skipped.** Issues that do not follow the `wiki-docs.yml` template format (missing Page, Finding, or Recommendation fields) are not actionable by the system. They are skipped without comment -- the system does not attempt to interpret freeform issue text.
+- **Unstructured issues are skipped.** Issues that do not follow the `documentation-issue.md` template format (missing Page, Finding, or Recommendation fields) are not actionable by the system. They are skipped without comment -- the system does not attempt to interpret freeform issue text.
 - **Idempotency.** Running `/resolve-issues` twice is safe. If the quoted text from a finding no longer exists in the wiki (because a previous run or manual edit already addressed it), the corrector skips the issue. New issues filed since the last run are picked up.
 - **Editorial guidance is current.** Correctors read the current editorial guidance and wiki instructions before applying fixes. Editorial standards may have evolved since the issue was filed. The applied fix conforms to current guidance, not just the recommendation text.
 - **No scope selection arguments.** The command remediates all open actionable documentation issues. There are no flags (`-plan`), issue number filters, or page name filters. If scope narrowing is ever needed, it happens through conversation, not arguments.
@@ -97,7 +97,7 @@ No open issues with the `documentation` label exist. There is nothing to remedia
 
 ### Step 5a -- All issues are unstructured
 
-Every open documentation issue lacks the structured fields from the `wiki-docs.yml` template. None are actionable by the system.
+Every open documentation issue lacks the structured fields from the `documentation-issue.md` template. None are actionable by the system.
 
 1. **Fulfillment orchestrator** -- Reports that all open issues lack structured fields and cannot be processed. Suggests the user review them manually on GitHub.
 2. **Fulfillment orchestrator** -- Stops.
@@ -142,8 +142,8 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions of publish
 
 ## Protocols
 
-- **workspace.config.yml** -- step 2, input. The workspace config provides repo identity, source dir, wiki dir, audience, and tone. Contract defined in UC-05.
-- **Issue body (wiki-docs.yml)** -- step 5, input. The published protocol between UC-02 (producer) and UC-03 (consumer). Each GitHub issue body conforms to the `.github/ISSUE_TEMPLATE/wiki-docs.yml` schema. Fields: Page, Editorial lens, Severity, Finding, Recommendation, Source file, Notes. UC-03 parses these fields to determine what to fix and where.
+- **workspace.config.md** -- step 2, input. The workspace config provides repo identity, source dir, wiki dir, audience, and tone. Contract defined in UC-05.
+- **Issue body (documentation-issue.md)** -- step 5, input. The published protocol between UC-02 (producer) and UC-03 (consumer). Each GitHub issue body conforms to the `.claude/forms/documentation-issue.md` schema. Fields: Page, Editorial lens, Severity, Finding, Recommendation, Source file, Notes. UC-03 parses these fields to determine what to fix and where.
 - **fetch-docs-issues.sh** -- step 4, input: config path, output: JSON array of open issues labeled `documentation`. Delegates to `gh issue list`.
 - **close-issue.sh** -- step 9, input: issue number, comment text, config path. Closes the issue with a comment (`--comment`) or comments without closing (`--skip`). Used for both applied and skipped issues.
 - **Corrector report** -- step 8, output from each corrector. A structured report listing each issue it processed with status (applied or skipped), description of the change (if applied), and reason (if skipped).
@@ -151,7 +151,7 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions of publish
 ## Notes
 
 - **Remediation, not resolution.** The drive is applying fixes, not closing tickets. "Resolve issues" is the command name for discoverability, but the use case goal is wiki correction. This distinction matters: an agent that optimizes for closing issues would be tempted to close without fixing. An agent that optimizes for remediation applies the fix and lets closure follow naturally.
-- **Consuming UC-02's output.** UC-03 consumes FindingFiled events from UC-02 via GitHub Issues. The issue body conforming to `wiki-docs.yml` is the published protocol. UC-03 has no dependency on UC-02's internal state (proofread cache, explorer summaries) -- only on the durable GitHub issues.
+- **Consuming UC-02's output.** UC-03 consumes FindingFiled events from UC-02 via GitHub Issues. The issue body conforming to `documentation-issue.md` is the published protocol. UC-03 has no dependency on UC-02's internal state (proofread cache, explorer summaries) -- only on the durable GitHub issues.
 - **Unstructured issues are invisible.** Manually created issues that do not follow the template format are skipped silently. The system does not comment on them or mark them. This is a deliberate boundary: the system only processes what it can parse. Users who want manual issues resolved must do so manually.
 - **Conflicting edits on the same section.** When multiple issues affect the same section of a wiki page, the corrector must coordinate edits so they do not conflict. This is an implementation concern -- the corrector applies edits sequentially within a page, reading the page state between edits if necessary. Not modeled as a use-case-level obstacle because it is a coordination problem internal to the corrector, not a threat to the goal.
 - **`needs-clarification` label.** When a corrector skips an issue because the recommendation is ambiguous or needs human input, the fulfillment orchestrator adds a `needs-clarification` label to the GitHub issue (in addition to commenting). This makes ambiguous issues filterable and queryable on GitHub. The `documentation` label remains.
@@ -160,6 +160,6 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions of publish
 - **Implementation gap: command file supports `-plan` and scope arguments.** The use case removes these. The command file should be updated to remediate all open actionable issues without scope selection.
 - **Implementation gap: command file uses `docs` label reference.** The command file description mentions "docs-labeled" issues. The actual label is `documentation` (matching the issue template). Terminology should be aligned.
 - **Implementation: editorial context sources.** Step 3 absorbs editorial context from: editorial guidance (`.claude/guidance/editorial-guidance.md`), wiki instructions (`.claude/guidance/wiki-instructions.md`), and the target project's CLAUDE.md if it exists (`{sourceDir}/CLAUDE.md`).
-- **Implementation: issue parsing.** Step 5 parses each issue body against the `wiki-docs.yml` template schema, extracting structured fields: Page, Editorial lens, Severity, Finding, Recommendation, Source file, Notes. The field schema is defined in the Protocols section.
+- **Implementation: issue parsing.** Step 5 parses each issue body against the `documentation-issue.md` template schema, extracting structured fields: Page, Editorial lens, Severity, Finding, Recommendation, Source file, Notes. The field schema is defined in the Protocols section.
 - **Implementation: corrector dispatch.** Step 6 groups actionable issues by wiki page and notes source file references for accuracy issues. Step 7 dispatches one corrector per wiki page, providing the page path, parsed issues, source file paths, editorial guidance, audience, and tone.
 - **Relationship to other use cases:** UC-03 requires UC-05 (Provision Workspace) as a prerequisite. It consumes FindingFiled events from UC-02 (Review Wiki Quality) via GitHub Issues. It has no dependency on UC-01 (Populate New Wiki), UC-04 (Sync Wiki with Source Changes), or UC-06 (Decommission Workspace). UC-02 and UC-03 share a published protocol (the issue body schema) but operate independently -- they do not share internal state.

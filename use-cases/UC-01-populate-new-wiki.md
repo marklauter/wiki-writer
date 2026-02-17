@@ -115,7 +115,7 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions.
 
 ## Protocols
 
-- **workspace.config.yml** -- step 2, input. The workspace config provides repo identity, source dir, wiki dir, audience, and tone. This is the contract defined in UC-05.
+- **workspace.config.md** -- step 2, input. The workspace config provides repo identity, source dir, wiki dir, audience, and tone. This is the contract defined in UC-05.
 - **Explorer report** -- step 6, output from each researcher. A structured report covering one facet of the source code (architecture, public API, configuration, features, or examples). Includes specific file paths and line numbers. Consumed by the developmental editor in step 8.
 - **Wiki plan** -- step 8, output from the developmental editor. A hierarchical structure of sections containing pages, each with filename, title, description, and key source files. Presented to the user for approval in step 9. Consumed by the commissioning orchestrator to dispatch creators in step 10.
 - **Writing assignment** -- step 10, input to each creator. Contains: page file path, title, description, key source files to read, audience, tone, and editorial guidance. One assignment per creator.

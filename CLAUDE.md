@@ -10,7 +10,7 @@ This repo is a reusable workspace that supports multiple target projects simulta
 
 ```
 workspace/
-  config/{owner}/{repo}/workspace.config.yml   # per-project config
+  config/{owner}/{repo}/workspace.config.md   # per-project config
   {owner}/{repo}/                               # cloned source repo (READONLY)
   {owner}/{repo}.wiki/                          # cloned wiki repo
 ```
@@ -19,26 +19,16 @@ Example for `acme/WidgetLib`:
 
 ```
 workspace/
-  config/acme/WidgetLib/workspace.config.yml
+  config/acme/WidgetLib/workspace.config.md
   acme/WidgetLib/
   acme/WidgetLib.wiki/
 ```
-
-### Config format
-
-Each `workspace.config.yml` contains:
-
-- `repo` — GitHub `owner/repo` slug (used for `gh` commands, e.g., `acme/WidgetLib`)
-- `sourceDir` — path to the cloned source repo (e.g., `workspace/acme/WidgetLib`)
-- `wikiDir` — path to the cloned wiki repo (e.g., `workspace/acme/WidgetLib.wiki`)
-- `audience` — target audience for the wiki (e.g., ".NET developers integrating the library")
-- `tone` — writing tone/style (e.g., "reference-style", "tutorial-style")
 
 ### Workspace selection
 
 All commands must resolve a workspace before doing anything else. Follow these steps in order:
 
-1. List config files matching `workspace/config/*/*/workspace.config.yml`.
+1. List config files matching `workspace/config/*/*/workspace.config.md`.
 2. If no config files exist, tell the user to run `/up` first and **stop**.
 3. If `$ARGUMENTS` contains a token that matches a workspace (either `owner/repo` or just `repo`), select that workspace and remove the token from the arguments before continuing.
 4. If exactly one workspace exists and no token matched, auto-select it.
@@ -48,6 +38,10 @@ All commands must resolve a workspace before doing anything else. Follow these s
 ### Source repo policy
 
 The source repo is **READONLY**. Never stage, commit, or push changes to it. It is cloned only as reference for writing wiki content.
+
+## Forms
+
+`.claude/forms/` contains the canonical shape definitions for structured artifacts — config files, domain events, reports, issue bodies. Commands and agents reference specific forms as needed.
 
 ## Guidance
 

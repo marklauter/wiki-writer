@@ -24,7 +24,7 @@ wiki-writer/
 │   └── config/
 │       └── {owner}/
 │           └── {repo}/
-│               └── workspace.config.yml
+│               └── workspace.config.md
 ```
 
 ## Prerequisites
@@ -56,7 +56,7 @@ wiki-writer/
    /up
    ```
 
-   This interviews you for the source repo clone URL, target audience, and tone, then clones the source repo and its wiki into `workspace/` and writes `workspace/config/{owner}/{repo}/workspace.config.yml`. All other commands use this config. Run `/up` again to load additional projects.
+   This interviews you for the source repo clone URL, target audience, and tone, then clones the source repo and its wiki into `workspace/` and writes `workspace/config/{owner}/{repo}/workspace.config.md`. All other commands use this config. Run `/up` again to load additional projects.
 
 4. **Bootstrap the wiki (if new):**
 
@@ -86,7 +86,7 @@ What it does:
 - Asks for the source repo clone URL (full HTTPS or SSH URL from GitHub), target audience, and tone
 - If a workspace already exists for the same repo, stops and tells you to run `/down` first
 - Clones the source repo and wiki repo into `workspace/{owner}/`
-- Writes `workspace/config/{owner}/{repo}/workspace.config.yml` with:
+- Writes `workspace/config/{owner}/{repo}/workspace.config.md` with:
   - `repo` — GitHub `owner/repo` slug (parsed from the clone URL)
   - `sourceDir` — path to cloned source repo (e.g., `workspace/{owner}/{repo}`)
   - `wikiDir` — path to cloned wiki repo (e.g., `workspace/{owner}/{repo}.wiki`)

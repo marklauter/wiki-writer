@@ -37,7 +37,7 @@ Eval the output to get `OWNER` and `REPO_NAME`. If the script exits with code 1,
 ### 4. Check for existing workspace
 
 ```bash
-test -f workspace/config/$OWNER/$REPO_NAME/workspace.config.yml
+test -f workspace/config/$OWNER/$REPO_NAME/workspace.config.md
 ```
 
 If the file exists, tell the user: "A workspace for **$OWNER/$REPO_NAME** already exists. Run `/down` first if you want to start fresh." Then **stop**.
@@ -101,7 +101,7 @@ Show the user what was provisioned:
 - **Repository:** $OWNER/$REPO_NAME
 - **Source clone:** workspace/$OWNER/$REPO_NAME/
 - **Wiki clone:** workspace/$OWNER/$REPO_NAME.wiki/
-- **Config:** workspace/config/$OWNER/$REPO_NAME/workspace.config.yml
+- **Config:** workspace/config/$OWNER/$REPO_NAME/workspace.config.md
 - **Audience:** (selected value)
 - **Tone:** (selected value)
 

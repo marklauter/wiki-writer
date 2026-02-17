@@ -10,7 +10,7 @@ The workspace directory structure enforces isolation:
 
 ```
 workspace/
-  config/{owner}/{repo}/workspace.config.yml
+  config/{owner}/{repo}/workspace.config.md
   {owner}/{repo}/          # source clone (readonly)
   {owner}/{repo}.wiki/     # wiki clone (mutable)
 ```
@@ -23,7 +23,7 @@ Every use case (except UC-05, which creates the workspace) begins by resolving w
 
 - **Source repo is readonly.** Source clones are reference material. No use case may stage, commit, or push to a source repo. This invariant is born in UC-05 (Provision Workspace) and enforced system-wide.
 
-- **Config is the source of truth for workspace identity.** The existence of `workspace/config/{owner}/{repo}/workspace.config.yml` defines whether a workspace exists. Directories without a config file are not workspaces. All workspace discovery is done by scanning for config files matching `workspace/config/*/*/workspace.config.yml`.
+- **Config is the source of truth for workspace identity.** The existence of `workspace/config/{owner}/{repo}/workspace.config.md` defines whether a workspace exists. Directories without a config file are not workspaces. All workspace discovery is done by scanning for config files matching `workspace/config/*/*/workspace.config.md`.
 
 - **One workspace per repository.** A workspace for a given `owner/repo` either exists or it does not. There is no partial state, no dual config, no overlapping workspaces for the same repo.
 
@@ -66,16 +66,16 @@ Every use case (except UC-05) begins by resolving which workspace to operate on.
 - `2` -- multiple workspaces, none matched. Caller should prompt user.
 - `3` -- identifier given but no match found.
 
-### workspace.config.yml
+### workspace.config.md
 
-The config file is the contract between Workspace Lifecycle and all other bounded contexts. Its schema:
+The config file is the contract between Workspace Lifecycle and all other bounded contexts. It uses `key: value` format:
 
-```yaml
+```
 repo: owner/repo
 sourceDir: workspace/owner/repo
 wikiDir: workspace/owner/repo.wiki
-audience: "target audience description"
-tone: "writing tone/style"
+audience: target audience description
+tone: writing tone/style
 ```
 
 Created by UC-05 (Provision Workspace). Read by every other use case via workspace selection. Removed by UC-06 (Decommission Workspace).

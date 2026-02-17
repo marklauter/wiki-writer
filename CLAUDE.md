@@ -7,4 +7,4 @@ Claude toolset for GitHub wiki management: creation, editorial review, drift det
 - Read before accessing workspace repos: `.claude/guidance/workspace-layout.md`
 - Read before editing or creating wiki pages: `.claude/guidance/editorial-guidance.md`
 - Read before editing or creating wiki pages: `.claude/guidance/wiki-instructions.md`
-- Forms (config, reports, issue bodies): `.claude/forms/`
+- Forms (templates, config, reports, issue bodies): `.claude/forms/`

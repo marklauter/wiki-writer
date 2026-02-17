@@ -10,9 +10,11 @@ The workspace directory structure enforces isolation:
 
 ```
 workspace/
-  config/{owner}/{repo}/workspace.config.md
-  {owner}/{repo}/          # source clone (readonly)
-  {owner}/{repo}.wiki/     # wiki clone (mutable)
+  artifacts/{owner}/{repo}/
+    workspace.config.md
+    reports/                # sync reports, review fallbacks
+  {owner}/{repo}/           # source clone (readonly)
+  {owner}/{repo}.wiki/      # wiki clone (mutable)
 ```
 
 Every use case (except UC-05, which creates the workspace) begins by resolving which workspace to operate on. This is handled by the **workspace selection protocol** (see Protocols section below).
@@ -23,7 +25,7 @@ Every use case (except UC-05, which creates the workspace) begins by resolving w
 
 - **Source repo is readonly.** Source clones are reference material. No use case may stage, commit, or push to a source repo. This invariant is born in UC-05 (Provision Workspace) and enforced system-wide.
 
-- **Config is the source of truth for workspace identity.** The existence of `workspace/config/{owner}/{repo}/workspace.config.md` defines whether a workspace exists. Directories without a config file are not workspaces. All workspace discovery is done by scanning for config files matching `workspace/config/*/*/workspace.config.md`.
+- **Config is the source of truth for workspace identity.** The existence of `workspace/artifacts/{owner}/{repo}/workspace.config.md` defines whether a workspace exists. Directories without a config file are not workspaces. All workspace discovery is done by scanning for config files matching `workspace/artifacts/*/*/workspace.config.md`.
 
 - **One workspace per repository.** A workspace for a given `owner/repo` either exists or it does not. There is no partial state, no dual config, no overlapping workspaces for the same repo.
 
@@ -54,7 +56,7 @@ Every use case (except UC-05) begins by resolving which workspace to operate on.
 - `REPO_NAME` -- repository name
 
 **Algorithm:**
-1. Scan for all config files under `workspace/config/`.
+1. Scan for all config files under `workspace/artifacts/`.
 2. If none found -- no workspaces exist. Report and stop.
 3. If an identifier token was provided, match it against `owner/repo` or `repo`. If no match -- report available workspaces and stop.
 4. If exactly one workspace exists and no token was provided -- auto-select it.

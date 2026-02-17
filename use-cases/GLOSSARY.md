@@ -58,7 +58,7 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Life goal** -- In Cooper's hierarchy, who the actor wants to be (e.g., "a responsible steward of project documentation").
 
-**Local fallback** -- Markdown files written to `workspace/reviews/{owner}/{repo}/{date-time}/` when GitHub is unreachable during UC-02; preserves findings outside both clones.
+**Local fallback** -- Markdown files written to `workspace/artifacts/{owner}/{repo}/reports/review-fallback/{date-time}/` when GitHub is unreachable during UC-02; preserves findings outside both clones.
 
 **No CLI-style flags** -- Cross-cutting invariant: commands are agent interactions, not C programs; confirmation and disambiguation happen through conversation, not `--force` or `--all`.
 
@@ -74,7 +74,7 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Primary actor** -- The actor who pursues the goal of a use case; in this system, always the User; framed using Cooper's goal hierarchy (life, experience, end goals).
 
-**Proofread cache** -- Ephemeral storage (`.proofread/{repo}/`) for coordinating actors during a single UC-02 review run; created at start, cleaned up at end.
+**Proofread cache** -- Ephemeral storage (`workspace/artifacts/{owner}/{repo}/.proofread/`) for coordinating actors during a single UC-02 review run; created at start, cleaned up at end.
 
 **Protocol** -- An actor boundary contract defining the input, output, and ownership at every crossing point between actors or between an actor and a sub-system.
 
@@ -102,7 +102,7 @@ Each entry is one sentence. If a term needs a paragraph, it belongs in [PHILOSOP
 
 **Supporting actor** -- An actor that participates in a use case in service of the primary actor's goal; has a drive, not a goal of its own.
 
-**Sync report** -- A durable, time-stamped markdown file at `workspace/reports/{owner}/{repo}/{date-time}/sync-report.md` showing corrections applied, pages verified, and claims that could not be checked; reports accumulate across runs.
+**Sync report** -- A durable, time-stamped markdown file at `workspace/artifacts/{owner}/{repo}/reports/sync/{date-time}-sync-report.md` showing corrections applied, pages verified, and claims that could not be checked; reports accumulate across runs.
 
 **Targeted edit** -- A surgical change to a specific section of a wiki page, preserving surrounding content; the required editing style for correctors in UC-03 and UC-04.
 

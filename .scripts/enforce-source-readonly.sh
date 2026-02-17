@@ -35,8 +35,8 @@ else
   exit 0
 fi
 
-# Allow workspace/config/ and workspace/reports/
-if [[ "$REL_PATH" == workspace/config/* || "$REL_PATH" == workspace/reports/* ]]; then
+# Allow workspace/artifacts/ (config, reports, cache)
+if [[ "$REL_PATH" == workspace/artifacts/* ]]; then
   exit 0
 fi
 

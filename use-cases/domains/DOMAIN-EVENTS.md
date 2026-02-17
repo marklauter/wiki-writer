@@ -78,7 +78,7 @@ The remediation run has completed. Every actionable issue has been processed -- 
 - **Bounded context:** [DC-04 Drift Detection](DC-04-drift-detection.md)
 - **Producer:** [UC-04](../UC-04-sync-wiki-with-source-changes.md)
 - **Consumer:** User
-- **Materialization:** Sync report on disk at `workspace/reports/{owner}/{repo}/{date-time}/sync-report.md`
+- **Materialization:** Sync report on disk at `workspace/artifacts/{owner}/{repo}/reports/sync/{date-time}-sync-report.md`
 
 The sync operation has completed. Every factual claim has been checked, drift has been corrected, and the user has a durable report.
 
@@ -95,9 +95,9 @@ The sync operation has completed. Every factual claim has been checked, drift ha
 - **Bounded context:** [DC-05 Workspace Lifecycle](DC-05-workspace-lifecycle.md)
 - **Producer:** [UC-05](../UC-05-provision-workspace.md)
 - **Consumer:** All operational bounded contexts (DC-01 through DC-04) via config file discovery
-- **Materialization:** `workspace/config/{owner}/{repo}/workspace.config.md` on disk
+- **Materialization:** `workspace/artifacts/{owner}/{repo}/workspace.config.md` on disk
 
-A new workspace configuration file has been written to disk. This is the durable fact that all other bounded contexts discover at workspace selection time by scanning for config files matching `workspace/config/*/*/workspace.config.md`.
+A new workspace configuration file has been written to disk. This is the durable fact that all other bounded contexts discover at workspace selection time by scanning for config files matching `workspace/artifacts/*/*/workspace.config.md`.
 
 ### Payload
 

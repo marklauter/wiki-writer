@@ -86,7 +86,7 @@ Bounded contexts and domain events become visible after multiple use cases exist
 
 The model exists. Now make it consistent, precise, and honest about its gaps.
 
-**Remove implementation leaks.** Scenario steps should express intent, not mechanics. If a step says "writes to `.proofread/{repo}/findings-{page}.md`," it has leaked implementation into the model. Rewrite it to express what is accomplished. Move the implementation detail to a Notes section.
+**Remove implementation leaks.** Scenario steps should express intent, not mechanics. If a step says "writes to `workspace/artifacts/{owner}/{repo}/.proofread/findings-{page}.md`," it has leaked implementation into the model. Rewrite it to express what is accomplished. Move the implementation detail to a Notes section.
 
 **Reconcile with reality.** If an implementation already exists, compare it to the model. Document every divergence as an implementation gap in the relevant use case's Notes section. The model is the source of truth — the implementation needs to catch up, not the other way around.
 

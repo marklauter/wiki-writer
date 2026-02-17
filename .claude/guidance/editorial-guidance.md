@@ -1,5 +1,9 @@
 # Editorial guidance
 
+## Source code context
+
+If the target project has a `CLAUDE.md` at `{sourceDir}/CLAUDE.md`, read it for architecture, style, and conventions before writing or reviewing wiki content.
+
 ## Writing principles
 
 - Lead with what the reader needs, not background.

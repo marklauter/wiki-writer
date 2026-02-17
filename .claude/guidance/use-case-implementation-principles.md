@@ -90,7 +90,7 @@ But agents within a use case need to exchange information. This happens through 
 
 **Process events** are intra-UC messages relayed by the orchestrator. When a researcher completes, it returns a structured report to the orchestrator. The orchestrator extracts the relevant content and includes it in the next agent's prompt — for example, passing a researcher's findings to a creator as input. The orchestrator is the relay. Process events are structured markdown constructed from templates so that every agent receives information in a predictable format. They do not persist beyond the session.
 
-**Domain events** are inter-UC messages that persist as durable artifacts. A proofreader's findings become GitHub issues. A sync report becomes a file in `workspace/reports/`. These cross bounded context boundaries and outlive the session that produced them. They are consumed by different use cases at different times.
+**Domain events** are inter-UC messages that persist as durable artifacts. A proofreader's findings become GitHub issues. A sync report becomes a file in `workspace/artifacts/{owner}/{repo}/reports/`. These cross bounded context boundaries and outlive the session that produced them. They are consumed by different use cases at different times.
 
 The distinction matters: process events are prompt context passed through the orchestrator. Domain events are artifacts written to disk or external systems. Never pass raw subagent output between agents — transform it into a structured event first. The template is the form. The filled-in content is the memo.
 

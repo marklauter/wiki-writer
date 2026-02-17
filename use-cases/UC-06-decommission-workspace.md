@@ -27,8 +27,8 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 
 - The source clone directory (`workspace/{owner}/{repo}/`) is removed.
 - The wiki clone directory (`workspace/{owner}/{repo}.wiki/`) is removed.
-- The config file (`workspace/config/{owner}/{repo}/workspace.config.md`) is removed.
-- Empty parent directories under `workspace/config/` and `workspace/` are cleaned up.
+- The artifacts directory (`workspace/artifacts/{owner}/{repo}/`) is removed — config, reports, and proofread cache are all deleted.
+- Empty parent directories under `workspace/artifacts/` and `workspace/` are cleaned up.
 - The user sees confirmation of what was removed: repo identity, directories deleted, config file deleted, and remaining workspace count. If other workspaces remain, lists them. If none remain, notes that `/up` can provision a new one.
 
 ## Failure outcome
@@ -82,7 +82,7 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions.
 
 - **workspace.config.md** -- step 3, input to decommissioning. The config file is read to discover the source and wiki directory paths. This is the same contract defined in UC-05.
 - **check-wiki-safety.sh** -- step 4, input: wiki directory path, output: structured report of uncommitted changes and unpushed commits (UNCOMMITTED, UNPUSHED flags with file/commit listings).
-- **remove-workspace.sh** -- step 5, input: config file path. Parses the config, removes the source clone, wiki clone, config file, and empty parent directories. Does not perform safety checks -- the caller (step 4) owns that responsibility.
+- **remove-workspace.sh** -- step 5, input: config file path. Parses the config, removes the source clone, wiki clone, and artifacts directory (config, reports, proofread cache), then cleans up empty parent directories. Does not perform safety checks -- the caller (step 4) owns that responsibility.
 
 ## Notes
 
@@ -93,5 +93,5 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions.
 - **Scripts own deterministic behavior.** (See [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md).) The safety check (`check-wiki-safety.sh`) and removal (`remove-workspace.sh`) are separate scripts by design. The safety check produces a report; the removal script acts on it. The `/down` command should delegate to both scripts rather than inlining git commands.
 - **Implementation gap: command vs. use case reconciliation.** The current `/down` command file supports `--force`, `--all`, and inlines git commands rather than delegating to scripts. It also uses a simple "proceed or abort" confirmation rather than requiring the user to type the repo name. The command file should be updated to match this use case: single workspace, always check safety, type-to-confirm, delegate to scripts.
 - **Implementation: workspace discovery.** Step 3 reads `workspace.config.md` to locate the source and wiki directory paths.
-- **Implementation: workspace removal.** Step 5 removes the source clone, wiki clone, config file, and empty parent directories under `workspace/config/` and `workspace/`.
+- **Implementation: workspace removal.** Step 5 removes three things: the source clone (`workspace/{owner}/{repo}/`), the wiki clone (`workspace/{owner}/{repo}.wiki/`), and the entire artifacts directory (`workspace/artifacts/{owner}/{repo}/`). Empty parent directories under `workspace/artifacts/` and `workspace/` are cleaned up afterward.
 - **Relationship to other use cases:** UC-06 is the inverse of UC-05 (Provision Workspace). It has no direct relationship to the editorial use cases (UC-01 through UC-04) -- it simply removes the workspace they operate on. If the user has unpublished wiki work, they should commit and push their changes using git before decommissioning.

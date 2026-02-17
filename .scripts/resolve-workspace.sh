@@ -21,7 +21,7 @@ MATCH="${1:-}"
 configs=()
 while IFS= read -r -d '' f; do
   configs+=("$f")
-done < <(find "$PROJECT_DIR/workspace/config" -mindepth 3 -maxdepth 3 \
+done < <(find "$PROJECT_DIR/workspace/artifacts" -mindepth 3 -maxdepth 3 \
   -name "workspace.config.md" -print0 2>/dev/null || true)
 
 if [[ ${#configs[@]} -eq 0 ]]; then

@@ -35,7 +35,7 @@ if [[ -z "$URL" || -z "$OWNER" || -z "$REPO_NAME" || -z "$AUDIENCE" || -z "$TONE
 fi
 
 SLUG="$OWNER/$REPO_NAME"
-CONFIG_DIR="$PROJECT_DIR/workspace/config/$OWNER/$REPO_NAME"
+CONFIG_DIR="$PROJECT_DIR/workspace/artifacts/$OWNER/$REPO_NAME"
 CONFIG_PATH="$CONFIG_DIR/workspace.config.md"
 SOURCE_DIR="workspace/$OWNER/$REPO_NAME"
 WIKI_DIR="workspace/$OWNER/$REPO_NAME.wiki"
@@ -56,7 +56,7 @@ if ! git clone "$URL" "$PROJECT_DIR/$SOURCE_DIR" 2>&1; then
   # cleanup
   rm -rf "$PROJECT_DIR/$SOURCE_DIR"
   rmdir "$CONFIG_DIR" 2>/dev/null || true
-  rmdir "$PROJECT_DIR/workspace/config/$OWNER" 2>/dev/null || true
+  rmdir "$PROJECT_DIR/workspace/artifacts/$OWNER" 2>/dev/null || true
   rmdir "$PROJECT_DIR/workspace/$OWNER" 2>/dev/null || true
   exit 3
 fi
@@ -75,7 +75,7 @@ if ! git clone "$WIKI_URL" "$PROJECT_DIR/$WIKI_DIR" 2>&1; then
   rm -rf "$PROJECT_DIR/$SOURCE_DIR"
   rm -rf "$PROJECT_DIR/$WIKI_DIR"
   rmdir "$CONFIG_DIR" 2>/dev/null || true
-  rmdir "$PROJECT_DIR/workspace/config/$OWNER" 2>/dev/null || true
+  rmdir "$PROJECT_DIR/workspace/artifacts/$OWNER" 2>/dev/null || true
   rmdir "$PROJECT_DIR/workspace/$OWNER" 2>/dev/null || true
   exit 4
 fi

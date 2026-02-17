@@ -44,7 +44,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 - **Issue template must exist.** The issue template (`.claude/forms/documentation-issue.md`) belongs to the wiki-agent repo and must be present. Filed issues conform to its schema.
 - **Editorial guidance must exist.** The editorial guidance (`.claude/guidance/editorial-guidance.md`) and wiki instructions (`.claude/guidance/wiki-instructions.md`) belong to the wiki-agent repo and must be present. Proofreaders apply these standards.
 - **`documentation` label is invariant.** All wiki-related issues carry the `documentation` label. Deduplication scopes to open issues with this label.
-- **Proofread cache is ephemeral.** The `.proofread/{repo}/` cache exists only to coordinate agents during a single run. It is created at the start and cleaned up at the end. GitHub issues are the durable output.
+- **Proofread cache is ephemeral.** The `workspace/artifacts/{owner}/{repo}/.proofread/` cache exists only to coordinate agents during a single run. It is created at the start and cleaned up at the end. GitHub issues are the durable output.
 - **Repo freshness is the user's responsibility.** The system does not pull or verify that clones are up to date. The user is responsible for ensuring the workspace reflects the state they want reviewed.
 
 ## Success outcome
@@ -59,7 +59,7 @@ See also: [SHARED-INVARIANTS.md](SHARED-INVARIANTS.md) for cross-cutting invaria
 
 - If failure occurs before proofreaders complete (workspace resolution, researcher failure, all proofreaders fail), no issues are filed. The user is told what failed.
 - If some proofreaders succeed and some fail, findings from successful proofreaders proceed through the pipeline. The summary reports which pages or lenses were not covered.
-- If GitHub is unreachable, issues are written locally to `workspace/reviews/{owner}/{repo}/{date-time}/` as fallback files. The summary reports locally-written issues with file paths.
+- If GitHub is unreachable, issues are written locally to `workspace/artifacts/{owner}/{repo}/reports/review-fallback/{date-time}/` as fallback files. The summary reports locally-written issues with file paths.
 - If individual issue filings fail, those issues are written locally as fallback. Other filings proceed.
 - In all cases, the proofread cache is cleaned up and the user is told what happened.
 
@@ -118,7 +118,7 @@ A proofreader crashes, times out, or produces unusable results. The page or lens
 The deduplicator cannot read open issues, and the oversight orchestrator cannot file new issues. The entire GitHub integration is unavailable.
 
 1. **Oversight orchestrator** -- Skips deduplication (cannot compare against existing issues).
-2. **Oversight orchestrator** -- Writes all findings as local fallback files to `workspace/reviews/{owner}/{repo}/{date-time}/`, one file per finding, using the issue frontmatter format.
+2. **Oversight orchestrator** -- Writes all findings as local fallback files to `workspace/artifacts/{owner}/{repo}/reports/review-fallback/{date-time}/`, one file per finding, using the issue frontmatter format.
 3. **Oversight orchestrator** -- Reports that issues were written locally because GitHub was unreachable, and provides the file paths.
 
 ### Step 9b -- All findings are duplicates
@@ -132,7 +132,7 @@ Every finding matches an existing open GitHub issue. Nothing new to file.
 
 The `file-issue.sh` script fails for a specific finding after its internal retry.
 
-1. **Oversight orchestrator** -- Writes the failed issue as a local fallback file to `workspace/reviews/{owner}/{repo}/{date-time}/`, using the issue frontmatter format.
+1. **Oversight orchestrator** -- Writes the failed issue as a local fallback file to `workspace/artifacts/{owner}/{repo}/reports/review-fallback/{date-time}/`, using the issue frontmatter format.
 2. **Oversight orchestrator** -- Continues filing remaining issues.
 3. The summary reports locally-written issues with file paths alongside successfully filed issues.
 
@@ -156,7 +156,7 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions of publish
 - **Explorer summary** -- step 6, output from each researcher. A structured summary covering one domain facet of the source code (API surface, architecture, configuration). Written to the proofread cache. Consumed by proofreaders in step 8.
 - **Finding format** -- step 8, output from each proofreader. A structured finding with: page, editorial lens, severity, finding text (with quoted problematic text), recommendation (with corrected text where applicable), and source file citation (accuracy lens only). Written to the proofread cache. Values for editorial lens and severity must match the exact dropdown options in the issue template (`documentation-issue.md`).
 - **Issue body (documentation-issue.md)** -- step 10, output from the oversight orchestrator. A GitHub issue body conforming to the `.claude/forms/documentation-issue.md` schema. Fields: Page, Editorial lens, Severity, Finding, Recommendation, Source file, Notes. This is the published protocol between UC-02 (producer) and UC-03 (consumer).
-- **Local fallback format** -- steps 9a/10a, output when GitHub is unreachable. A markdown file with YAML frontmatter (title, page, editorial lens, severity) and body sections (Finding, Recommendation, Source file). Written to `workspace/reviews/{owner}/{repo}/{date-time}/`.
+- **Local fallback format** -- steps 9a/10a, output when GitHub is unreachable. A markdown file with YAML frontmatter (title, page, editorial lens, severity) and body sections (Finding, Recommendation, Source file). Written to `workspace/artifacts/{owner}/{repo}/reports/review-fallback/{date-time}/`.
 
 ## Notes
 
@@ -166,8 +166,8 @@ See [DOMAIN-EVENTS.md](domains/DOMAIN-EVENTS.md) for full definitions of publish
 - **Explorer facets are extensible.** The three named facets (API surface, architecture, configuration) are the minimum. Some projects may warrant additional facets. The use case does not prescribe a fixed count.
 - **Sidebar validation is proofreader work.** Sidebar structural integrity (orphan pages, broken links) is checked by the structure lens proofreader, not by the oversight orchestrator. Orchestrators coordinate; proofreaders review.
 - **GitHub is a sub-system.** GitHub Issues serves as the system's durable event store for findings. The issue is the published fact that UC-03 (Resolve Documentation Issues) consumes. This framing means GitHub unreachability is a system degradation, not an external dependency failure.
-- **Local fallback path.** When GitHub is unreachable or individual filings fail, issues are written to `workspace/reviews/{owner}/{repo}/{date-time}/` -- outside both the source clone and wiki clone. This keeps the source clone clean (readonly invariant) and the wiki clone uncontaminated by review artifacts.
+- **Local fallback path.** When GitHub is unreachable or individual filings fail, issues are written to `workspace/artifacts/{owner}/{repo}/reports/review-fallback/{date-time}/` -- outside both the source clone and wiki clone. This keeps the source clone clean (readonly invariant) and the wiki clone uncontaminated by review artifacts.
 - **Implementation: editorial context sources.** Step 3 absorbs editorial context from: editorial guidance (`.claude/guidance/editorial-guidance.md`), wiki instructions (`.claude/guidance/wiki-instructions.md`), the issue template (`.claude/forms/documentation-issue.md`), and the target project's CLAUDE.md if it exists (`{sourceDir}/CLAUDE.md`).
 - **Implementation: content page discovery.** Step 4 identifies content pages by excluding structural files -- those prefixed with `_` (e.g., `_Sidebar.md`, `_Footer.md`).
-- **Implementation: proofread cache.** Explorer summaries (step 5), proofreader findings (step 8), and deduplicated results (step 9) are coordinated through the proofread cache (`.proofread/{repo}/`). The cache is created at the start of a run and cleaned up when the review completes. See the "Proofread cache is ephemeral" invariant.
+- **Implementation: proofread cache.** Explorer summaries (step 5), proofreader findings (step 8), and deduplicated results (step 9) are coordinated through the proofread cache (`workspace/artifacts/{owner}/{repo}/.proofread/`). The cache is created at the start of a run and cleaned up when the review completes. The cache path requires both owner and repo from workspace resolution (step 2) — it lives under the artifacts tree, not at the project root. See the "Proofread cache is ephemeral" invariant.
 - **Relationship to other use cases:** UC-02 requires UC-05 (Provision Workspace) as a prerequisite and typically follows UC-01 (Populate New Wiki), though it can review any populated wiki. Its output (FindingFiled) feeds UC-03 (Resolve Documentation Issues) via the issue body protocol. It has no dependency on UC-04 (Sync Wiki with Source Changes) or UC-06 (Decommission Workspace).
